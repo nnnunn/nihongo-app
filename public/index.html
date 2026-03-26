@@ -129,6 +129,38 @@ main { position:relative; z-index:1; max-width:960px; margin:0 auto; padding:48p
 
 @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
+/* QUIZ MODE */
+.quiz-mode-btns { display:flex; gap:10px; margin-bottom:32px; }
+.quiz-mode-btn { flex:1; padding:12px; border:2px solid var(--mist); border-radius:8px; background:white; font-family:inherit; font-size:14px; cursor:pointer; color:var(--ink); opacity:0.5; transition:all 0.2s; }
+.quiz-mode-btn:hover { opacity:0.8; }
+.quiz-mode-btn.active { border-color:var(--red); color:var(--red); opacity:1; font-weight:500; background:rgba(192,57,43,0.04); }
+
+/* LISTEN MODE */
+.listen-word { text-align:center; margin-bottom:36px; }
+.listen-play-btn { background:var(--red); color:white; border:none; border-radius:50%; width:72px; height:72px; font-size:28px; cursor:pointer; transition:all 0.2s; box-shadow:0 4px 16px rgba(192,57,43,0.35); display:inline-flex; align-items:center; justify-content:center; }
+.listen-play-btn:hover { transform:scale(1.08); }
+.listen-play-btn.playing { background:var(--gold); animation:pulse 0.8s infinite; }
+.listen-speed-btns { display:flex; gap:8px; justify-content:center; margin-top:14px; }
+.speed-btn { background:white; border:1.5px solid var(--mist); border-radius:20px; padding:5px 16px; font-size:12px; font-family:inherit; cursor:pointer; color:var(--ink); opacity:0.55; transition:all 0.2s; letter-spacing:0.5px; }
+.speed-btn:hover { opacity:1; border-color:var(--gold); }
+.speed-btn.active { background:var(--ink); color:white; border-color:var(--ink); opacity:1; }
+.listen-hint { font-size:13px; opacity:0.4; margin-top:8px; letter-spacing:0.5px; }
+
+/* TILE AREA */
+.tile-area { margin-bottom:20px; }
+.tile-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; opacity:0.4; margin-bottom:10px; }
+.answer-slots { display:flex; flex-wrap:wrap; gap:8px; min-height:56px; padding:10px; border:2px dashed var(--mist); border-radius:8px; background:rgba(255,255,255,0.6); margin-bottom:16px; align-items:center; transition:border-color 0.2s; }
+.answer-slots.drag-over { border-color:var(--gold); background:var(--gold-light); }
+.kana-tile { font-family:'Noto Serif JP',serif; font-size:22px; background:white; border:1.5px solid var(--mist); border-radius:6px; width:48px; height:52px; display:inline-flex; align-items:center; justify-content:center; cursor:grab; user-select:none; box-shadow:0 2px 6px var(--shadow); transition:all 0.15s; }
+.kana-tile:hover { border-color:var(--gold); transform:translateY(-2px); }
+.kana-tile.dragging { opacity:0.4; transform:scale(0.95); }
+.kana-tile.correct-tile { border-color:#4caf50; background:#e8f5e9; }
+.kana-tile.wrong-tile { border-color:#ef9a9a; background:#ffebee; }
+.tile-pool { display:flex; flex-wrap:wrap; gap:8px; padding:10px; border:1.5px solid var(--mist); border-radius:8px; background:white; min-height:56px; align-items:center; }
+.check-btn { display:block; margin:20px auto 0; background:var(--ink); color:white; border:none; padding:13px 36px; border-radius:6px; font-size:13px; letter-spacing:2px; cursor:pointer; font-family:inherit; font-weight:500; transition:all 0.2s; }
+.check-btn:hover:not(:disabled) { background:var(--red); }
+.check-btn:disabled { opacity:0.4; cursor:default; }
+
 @media (max-width:680px) {
   header { padding:24px 20px 20px; }
   nav { padding:0 20px; }
@@ -185,7 +217,7 @@ main { position:relative; z-index:1; max-width:960px; margin:0 auto; padding:48p
     <p class="section-desc">選擇主題，每次隨機顯示 10 個單字，點擊卡片查看例句</p>
     <div class="vocab-controls">
       <div class="theme-chips">
-        <button class="theme-chip active" onclick="selectTheme(this,'日常生活')">日常生活</button>
+        <button class="theme-chip" onclick="selectTheme(this,'日常生活')">日常生活</button>
         <button class="theme-chip" onclick="selectTheme(this,'飲食料理')">飲食料理</button>
         <button class="theme-chip" onclick="selectTheme(this,'旅遊交通')">旅遊交通</button>
         <button class="theme-chip" onclick="selectTheme(this,'動物自然')">動物自然</button>
@@ -193,6 +225,7 @@ main { position:relative; z-index:1; max-width:960px; margin:0 auto; padding:48p
         <button class="theme-chip" onclick="selectTheme(this,'工作學習')">工作學習</button>
         <button class="theme-chip" onclick="selectTheme(this,'家庭關係')">家庭關係</button>
         <button class="theme-chip" onclick="selectTheme(this,'身體健康')">身體健康</button>
+        <button class="theme-chip" onclick="selectTheme(this,'外來語')">🔤 外來語</button>
       </div>
       <div>
         <button class="shuffle-btn" onclick="shuffleVocab()">
@@ -214,7 +247,26 @@ main { position:relative; z-index:1; max-width:960px; margin:0 auto; padding:48p
   <!-- QUIZ -->
   <section class="section" id="quiz">
     <h2 class="section-title">測驗 <span>テスト</span></h2>
-    <p class="section-desc">看假名輸入羅馬拼音，共 20 題</p>
+    <div class="quiz-mode-btns">
+      <button class="quiz-mode-btn active" id="mode-btn-type" onclick="setQuizMode('type')">✍️ 輸入拼音</button>
+      <button class="quiz-mode-btn" id="mode-btn-listen" onclick="setQuizMode('listen')">👂 聽音排列</button>
+    </div>
+    <div class="listen-source-wrap" id="listen-source-wrap" style="display:none;margin-bottom:20px;">
+      <span style="font-size:12px;letter-spacing:1px;opacity:0.45;margin-right:10px;">題目來源：</span>
+      <button class="speed-btn active" id="src-btn-kana" onclick="setListenSource('kana',this)">平假名</button>
+      <button class="speed-btn" id="src-btn-vocab" onclick="setListenSource('vocab',this)">單字庫</button>
+      <select id="listen-theme-select" style="display:none;margin-left:8px;padding:5px 10px;border:1.5px solid var(--mist);border-radius:20px;font-family:inherit;font-size:12px;background:white;color:var(--ink);cursor:pointer;">
+        <option value="日常生活">日常生活</option>
+        <option value="飲食料理">飲食料理</option>
+        <option value="旅遊交通">旅遊交通</option>
+        <option value="動物自然">動物自然</option>
+        <option value="情緒感受">情緒感受</option>
+        <option value="工作學習">工作學習</option>
+        <option value="家庭關係">家庭關係</option>
+        <option value="身體健康">身體健康</option>
+        <option value="外來語">外來語</option>
+      </select>
+    </div>
     <div class="quiz-container" id="quiz-container"></div>
   </section>
 
@@ -1025,10 +1077,161 @@ function toggleGrammar(header) {
 
 // ==================== QUIZ ====================
 function initQuiz() {
-  var all = hiragana.filter(function(k){ return k.char !== ''; });
-  quizData = pickRandom(all, 20);
+  if (quizMode === 'listen' && listenSource === 'vocab') {
+    var sel = document.getElementById('listen-theme-select');
+    var theme = sel ? sel.value : '日常生活';
+    var pool = vocabDB[theme] || [];
+    quizData = pickRandom(pool, Math.min(20, pool.length));
+  } else {
+    var all = hiragana.filter(function(k){ return k.char !== ''; });
+    quizData = pickRandom(all, 20);
+  }
   quizIndex = 0; quizScore = 0; quizAnswered = false;
-  renderQuiz();
+  if (quizMode === 'listen') renderListenQuiz();
+  else renderQuiz();
+}
+
+// ---- LISTEN MODE ----
+var listenSpeed = 1.0;
+var listenDragSrc = null;
+
+function renderListenQuiz() {
+  var container = document.getElementById('quiz-container');
+  if (quizIndex >= quizData.length) { showResult(container); return; }
+  var q = quizData[quizIndex];
+  var dots = quizData.map(function(_,i){ return '<div class="quiz-dot'+(i<quizIndex?' done':i===quizIndex?' current':'')+'"></div>'; }).join('');
+
+  // Get the word to display/arrange
+  var word = q.char || q.jp; // kana mode uses .char, vocab mode uses .jp
+  var chars = word.split('');
+
+  // Build tile pool: correct chars + distractors
+  var tileChars = chars.slice();
+  if (listenSource === 'kana') {
+    // For single kana, add 2 distractors
+    if (chars.length === 1) {
+      var others = hiragana.filter(function(k){ return k.char !== '' && k.char !== word; });
+      var picks = pickRandom(others, 2);
+      tileChars = [word, picks[0].char, picks[1].char];
+    }
+  } else {
+    // For vocab words, add 2-3 extra random kana as distractors
+    var extraCount = Math.max(2, Math.floor(chars.length * 0.5));
+    var allKana = hiragana.filter(function(k){ return k.char !== '' && chars.indexOf(k.char) < 0; });
+    var extras = pickRandom(allKana, extraCount).map(function(k){ return k.char; });
+    tileChars = chars.concat(extras);
+  }
+  tileChars = pickRandom(tileChars, tileChars.length);
+
+  var poolHtml = tileChars.map(function(c,i){
+    return '<div class="kana-tile" draggable="true" data-char="'+c+'" id="tile-'+i+'" '+
+      'ondragstart="listenDragStart(event)" ondragend="listenDragEnd(event)" '+
+      'onclick="listenTileClick(this)">'+c+'</div>';
+  }).join('');
+
+  // Show hint for vocab mode
+  var hintExtra = (listenSource === 'vocab' && q.zh) ? '　（'+q.zh+'）' : '';
+
+  container.innerHTML =
+    '<div class="quiz-progress">'+dots+'</div>'+
+    '<div style="text-align:right;font-size:12px;opacity:0.4;margin-bottom:20px;">'+(quizIndex+1)+' / '+quizData.length+'</div>'+
+    '<div class="listen-word">'+
+      '<button class="listen-play-btn" id="play-btn" onclick="playListenWord()">▶</button>'+
+      '<div class="listen-speed-btns">'+
+        '<button class="speed-btn'+(listenSpeed===1.0?' active':'')+'" onclick="setSpeed(1.0,this)">正常</button>'+
+        '<button class="speed-btn'+(listenSpeed===0.5?' active':'')+'" onclick="setSpeed(0.5,this)">慢速</button>'+
+      '</div>'+
+      '<div class="listen-hint">點擊播放音訊，排列出正確的假名順序'+hintExtra+'</div>'+
+    '</div>'+
+    '<div class="tile-area">'+
+      '<div class="tile-label">你的答案（點擊排列）</div>'+
+      '<div class="answer-slots" id="answer-slots" ondragover="event.preventDefault()" ondrop="listenDrop(event)"></div>'+
+      '<div class="tile-label">可用假名</div>'+
+      '<div class="tile-pool" id="tile-pool">'+poolHtml+'</div>'+
+    '</div>'+
+    '<button class="check-btn" id="check-btn" onclick="checkListenAnswer()">確認答案</button>'+
+    '<div class="quiz-feedback" id="quiz-feedback"></div>';
+
+  quizAnswered = false;
+  setTimeout(playListenWord, 400);
+}
+
+function playListenWord() {
+  var q = quizData[quizIndex];
+  var word = q.char || q.jp;
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var btn = document.getElementById('play-btn');
+  if (btn) { btn.classList.add('playing'); btn.textContent = '♪'; }
+  var utter = new SpeechSynthesisUtterance(word);
+  utter.lang = 'ja-JP';
+  utter.rate = listenSpeed;
+  utter.onend = function(){ if(btn){ btn.classList.remove('playing'); btn.textContent = '▶'; } };
+  window.speechSynthesis.speak(utter);
+}
+
+function setSpeed(s, btn) {
+  listenSpeed = s;
+  document.querySelectorAll('.speed-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+function listenTileClick(tile) {
+  if (quizAnswered) return;
+  var slots = document.getElementById('answer-slots');
+  var pool  = document.getElementById('tile-pool');
+  if (tile.parentElement === pool) {
+    slots.appendChild(tile);
+  } else {
+    pool.appendChild(tile);
+  }
+}
+
+function listenDragStart(e) {
+  listenDragSrc = e.target;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function listenDragEnd(e) {
+  e.target.classList.remove('dragging');
+}
+
+function listenDrop(e) {
+  e.preventDefault();
+  if (listenDragSrc) {
+    document.getElementById('answer-slots').appendChild(listenDragSrc);
+  }
+}
+
+function checkListenAnswer() {
+  if (quizAnswered) { quizIndex++; renderListenQuiz(); return; }
+  var slots    = document.getElementById('answer-slots');
+  var fb       = document.getElementById('quiz-feedback');
+  var checkBtn = document.getElementById('check-btn');
+  var q        = quizData[quizIndex];
+  var word     = q.char || q.jp;
+  var tiles    = slots.querySelectorAll('.kana-tile');
+  var answer   = Array.from(tiles).map(function(t){ return t.getAttribute('data-char'); }).join('');
+
+  quizAnswered = true;
+  checkBtn.textContent = quizIndex+1 >= quizData.length ? '查看結果 →' : '下一題 →';
+
+  if (answer === word) {
+    tiles.forEach(function(t){ t.classList.add('correct-tile'); });
+    quizScore++;
+    fb.textContent = '正確！✓　' + word + (q.zh ? '（'+q.zh+'）' : q.rom ? '（'+q.rom+'）' : '');
+    fb.className = 'quiz-feedback ok';
+    quizData[quizIndex]._ok = true;
+  } else {
+    tiles.forEach(function(t){ t.classList.add('wrong-tile'); });
+    fb.innerHTML = '答錯了！正確答案：<strong>'+word+'</strong>' + (q.zh ? '（'+q.zh+'）' : q.rom ? '（'+q.rom+'）' : '');
+    fb.className = 'quiz-feedback fail';
+    quizData[quizIndex]._ok = false;
+  }
+  quizData[quizIndex]._ans = answer;
+}
+  quizData[quizIndex]._ans = answer;
 }
 
 function renderQuiz() {
@@ -1084,10 +1287,13 @@ function showResult(container) {
   var pct = Math.round(quizScore/quizData.length*100);
   var emoji = pct===100?'🎉':pct>=80?'😊':pct>=60?'🙂':'😅';
   var rows = quizData.map(function(q){
+    var word    = q.char || q.jp;
+    var correct = q.rom || word;
+    var ans     = q._ans !== undefined ? q._ans : '—';
     return '<div class="quiz-review-row '+(q._ok?'ok':'ng')+'">'+
-      '<div class="review-char">'+q.char+'</div>'+
-      '<div class="review-correct">'+q.rom+'</div>'+
-      '<div class="'+(q._ok?'review-correct':'review-wrong')+'">'+(q._ans||'—')+'</div>'+
+      '<div class="review-char">'+word+'</div>'+
+      '<div class="review-correct">'+correct+'</div>'+
+      '<div class="'+(q._ok?'review-correct':'review-wrong')+'">'+ans+'</div>'+
       '<div style="text-align:center">'+(q._ok?'✓':'✗')+'</div>'+
     '</div>';
   }).join('');
@@ -1098,15 +1304,135 @@ function showResult(container) {
       '<button class="next-btn" onclick="initQuiz()">再試一次</button>'+
     '</div>'+
     '<div class="quiz-review">'+
-      '<div class="quiz-review-row header"><div>假名</div><div>正解</div><div>你的答案</div><div>結果</div></div>'+
+      '<div class="quiz-review-row header"><div>單字</div><div>正解</div><div>你的答案</div><div>結果</div></div>'+
       rows+
     '</div>';
+}
+
+// ==================== FOREIGN WORDS ====================
+vocabDB['外來語'] = [
+  {jp:'テレビ',reading:'terebi',zh:'電視',tag:'電器',ex:'テレビを見ます。（看電視。）'},
+  {jp:'ラジオ',reading:'rajio',zh:'收音機',tag:'電器',ex:'ラジオを聴きます。（聽收音機。）'},
+  {jp:'カメラ',reading:'kamera',zh:'相機',tag:'電器',ex:'カメラで写真を撮ります。（用相機拍照。）'},
+  {jp:'スマホ',reading:'sumaho',zh:'智慧手機',tag:'電器',ex:'スマホで調べます。（用手機查詢。）'},
+  {jp:'パソコン',reading:'pasokon',zh:'電腦',tag:'電器',ex:'パソコンで仕事をします。（用電腦工作。）'},
+  {jp:'インターネット',reading:'intaanetto',zh:'網路',tag:'科技',ex:'インターネットで調べます。（在網路上查詢。）'},
+  {jp:'アプリ',reading:'apuri',zh:'應用程式',tag:'科技',ex:'便利なアプリを使います。（使用方便的應用程式。）'},
+  {jp:'ゲーム',reading:'geemu',zh:'遊戲',tag:'娛樂',ex:'ゲームをします。（玩遊戲。）'},
+  {jp:'アニメ',reading:'anime',zh:'動畫',tag:'娛樂',ex:'アニメが好きです。（我喜歡動畫。）'},
+  {jp:'マンガ',reading:'manga',zh:'漫畫',tag:'娛樂',ex:'マンガを読みます。（看漫畫。）'},
+  {jp:'コンサート',reading:'konsaato',zh:'演唱會',tag:'娛樂',ex:'コンサートに行きます。（去演唱會。）'},
+  {jp:'ライブ',reading:'raibu',zh:'現場表演',tag:'娛樂',ex:'ライブが楽しかった。（現場表演很開心。）'},
+  {jp:'ホテル',reading:'hoteru',zh:'飯店',tag:'旅遊',ex:'ホテルに泊まります。（住飯店。）'},
+  {jp:'タクシー',reading:'takushii',zh:'計程車',tag:'交通',ex:'タクシーを呼びます。（叫計程車。）'},
+  {jp:'バス',reading:'basu',zh:'公車',tag:'交通',ex:'バスに乗ります。（搭公車。）'},
+  {jp:'スーパー',reading:'suupaa',zh:'超市',tag:'購物',ex:'スーパーで買い物します。（在超市購物。）'},
+  {jp:'デパート',reading:'depaato',zh:'百貨公司',tag:'購物',ex:'デパートで服を買います。（在百貨公司買衣服。）'},
+  {jp:'コンビニ',reading:'konbini',zh:'便利商店',tag:'購物',ex:'コンビニで買いました。（在便利商店買的。）'},
+  {jp:'レストラン',reading:'resutoran',zh:'餐廳',tag:'飲食',ex:'レストランで食べましょう。（去餐廳吃吧。）'},
+  {jp:'カフェ',reading:'kafe',zh:'咖啡廳',tag:'飲食',ex:'カフェでコーヒーを飲みます。（在咖啡廳喝咖啡。）'},
+  {jp:'コーヒー',reading:'koohii',zh:'咖啡',tag:'飲料',ex:'コーヒーを飲みます。（喝咖啡。）'},
+  {jp:'ジュース',reading:'juusu',zh:'果汁',tag:'飲料',ex:'ジュースを飲みたい。（想喝果汁。）'},
+  {jp:'ビール',reading:'biiru',zh:'啤酒',tag:'飲料',ex:'ビールを一杯ください。（請給我一杯啤酒。）'},
+  {jp:'ケーキ',reading:'keeki',zh:'蛋糕',tag:'食物',ex:'ケーキを食べます。（吃蛋糕。）'},
+  {jp:'チョコレート',reading:'chokoreeto',zh:'巧克力',tag:'食物',ex:'チョコレートが好きです。（我喜歡巧克力。）'},
+  {jp:'アイス',reading:'aisu',zh:'冰淇淋',tag:'食物',ex:'アイスを食べます。（吃冰淇淋。）'},
+  {jp:'パン',reading:'pan',zh:'麵包',tag:'食物',ex:'パンを食べます。（吃麵包。）'},
+  {jp:'ピザ',reading:'piza',zh:'披薩',tag:'食物',ex:'ピザを注文します。（點披薩。）'},
+  {jp:'パスタ',reading:'pasuta',zh:'義大利麵',tag:'食物',ex:'パスタが好きです。（我喜歡義大利麵。）'},
+  {jp:'サラダ',reading:'sarada',zh:'沙拉',tag:'食物',ex:'サラダを食べます。（吃沙拉。）'},
+  {jp:'スポーツ',reading:'supootsu',zh:'運動',tag:'活動',ex:'スポーツが好きです。（我喜歡運動。）'},
+  {jp:'サッカー',reading:'sakkaa',zh:'足球',tag:'運動',ex:'サッカーをします。（踢足球。）'},
+  {jp:'テニス',reading:'tenisu',zh:'網球',tag:'運動',ex:'テニスをします。（打網球。）'},
+  {jp:'バスケット',reading:'basuketto',zh:'籃球',tag:'運動',ex:'バスケットをします。（打籃球。）'},
+  {jp:'スキー',reading:'sukii',zh:'滑雪',tag:'運動',ex:'スキーをします。（滑雪。）'},
+  {jp:'ジム',reading:'jimu',zh:'健身房',tag:'運動',ex:'ジムに行きます。（去健身房。）'},
+  {jp:'プール',reading:'puuru',zh:'游泳池',tag:'運動',ex:'プールで泳ぎます。（在游泳池游泳。）'},
+  {jp:'ドラマ',reading:'dorama',zh:'電視劇',tag:'娛樂',ex:'ドラマを見ます。（看電視劇。）'},
+  {jp:'ミュージック',reading:'myuujikku',zh:'音樂',tag:'娛樂',ex:'ミュージックを聴きます。（聽音樂。）'},
+  {jp:'ファッション',reading:'fasshon',zh:'時尚',tag:'生活',ex:'ファッションが好きです。（我喜歡時尚。）'},
+  {jp:'ブランド',reading:'burando',zh:'品牌',tag:'購物',ex:'ブランドのバッグを買いました。（買了品牌包包。）'},
+  {jp:'セール',reading:'seeru',zh:'特賣',tag:'購物',ex:'セールで買いました。（在特賣時買的。）'},
+  {jp:'ポイント',reading:'pointo',zh:'點數',tag:'購物',ex:'ポイントを貯めます。（累積點數。）'},
+  {jp:'マスク',reading:'masuku',zh:'口罩',tag:'衛生',ex:'マスクをします。（戴口罩。）'},
+  {jp:'ワクチン',reading:'wakuchin',zh:'疫苗',tag:'健康',ex:'ワクチンを接種します。（接種疫苗。）'},
+  {jp:'ストレス',reading:'sutoresu',zh:'壓力',tag:'健康',ex:'ストレスを解消します。（消除壓力。）'},
+  {jp:'リラックス',reading:'rirakkusu',zh:'放鬆',tag:'健康',ex:'リラックスします。（放鬆。）'},
+  {jp:'ダイエット',reading:'daietto',zh:'節食',tag:'健康',ex:'ダイエット中です。（正在節食中。）'},
+  {jp:'エネルギー',reading:'enerugii',zh:'能量',tag:'健康',ex:'エネルギーが出ます。（充滿能量。）'},
+  {jp:'チャンス',reading:'chansu',zh:'機會',tag:'生活',ex:'チャンスを逃さない。（不錯過機會。）'},
+  {jp:'アドバイス',reading:'adobaisu',zh:'建議',tag:'生活',ex:'アドバイスをください。（請給我建議。）'},
+  {jp:'ミーティング',reading:'miitingu',zh:'會議',tag:'工作',ex:'ミーティングがあります。（有會議。）'},
+  {jp:'プレゼン',reading:'purezen',zh:'簡報',tag:'工作',ex:'プレゼンをします。（做簡報。）'},
+  {jp:'プロジェクト',reading:'purojekuto',zh:'專案',tag:'工作',ex:'プロジェクトが始まった。（專案開始了。）'},
+  {jp:'スケジュール',reading:'sukejuuru',zh:'行程',tag:'工作',ex:'スケジュールを確認します。（確認行程。）'},
+  {jp:'ノート',reading:'nooto',zh:'筆記本',tag:'學習',ex:'ノートに書きます。（在筆記本上寫。）'},
+  {jp:'テスト',reading:'tesuto',zh:'考試',tag:'學習',ex:'テストの準備をします。（準備考試。）'},
+  {jp:'レポート',reading:'repooto',zh:'報告',tag:'學習',ex:'レポートを書きます。（寫報告。）'},
+  {jp:'クラス',reading:'kurasu',zh:'班級',tag:'學習',ex:'クラスの友達と遊ぶ。（和班上朋友玩。）'},
+  {jp:'コース',reading:'koosu',zh:'課程',tag:'學習',ex:'日本語コースに入ります。（加入日文課程。）'},
+  {jp:'パーティー',reading:'paatii',zh:'派對',tag:'社交',ex:'パーティーに行きます。（去派對。）'},
+  {jp:'プレゼント',reading:'purezento',zh:'禮物',tag:'社交',ex:'プレゼントをあげます。（送禮物。）'},
+  {jp:'サプライズ',reading:'sapuraizu',zh:'驚喜',tag:'社交',ex:'サプライズをします。（製造驚喜。）'},
+  {jp:'ボランティア',reading:'borantia',zh:'志工',tag:'社交',ex:'ボランティアをします。（當志工。）'},
+  {jp:'イベント',reading:'ibento',zh:'活動',tag:'社交',ex:'イベントに参加します。（參加活動。）'},
+  {jp:'ニュース',reading:'nyuusu',zh:'新聞',tag:'媒體',ex:'ニュースを見ます。（看新聞。）'},
+  {jp:'ブログ',reading:'burogu',zh:'部落格',tag:'媒體',ex:'ブログを書きます。（寫部落格。）'},
+  {jp:'SNS',reading:'esuenusu',zh:'社群媒體',tag:'媒體',ex:'SNSで発信します。（在社群媒體發文。）'},
+  {jp:'フォロー',reading:'foroo',zh:'追蹤',tag:'媒體',ex:'フォローしてください。（請追蹤我。）'},
+  {jp:'タクシー',reading:'takushii',zh:'計程車',tag:'交通',ex:'タクシーで行きます。（搭計程車去。）'},
+  {jp:'バイク',reading:'baiku',zh:'摩托車',tag:'交通',ex:'バイクで通勤します。（騎摩托車通勤。）'},
+  {jp:'エレベーター',reading:'erebeetaa',zh:'電梯',tag:'建築',ex:'エレベーターを使います。（使用電梯。）'},
+  {jp:'エスカレーター',reading:'esukareetaa',zh:'電扶梯',tag:'建築',ex:'エスカレーターで上ります。（搭電扶梯上去。）'},
+  {jp:'トイレ',reading:'toire',zh:'廁所',tag:'建築',ex:'トイレはどこですか？（廁所在哪裡？）'},
+  {jp:'アパート',reading:'apaato',zh:'公寓',tag:'建築',ex:'アパートに住んでいます。（住在公寓。）'},
+  {jp:'マンション',reading:'manshon',zh:'大廈',tag:'建築',ex:'マンションを買いました。（買了大廈。）'},
+  {jp:'オフィス',reading:'ofisu',zh:'辦公室',tag:'建築',ex:'オフィスで仕事をします。（在辦公室工作。）'},
+  {jp:'ガソリン',reading:'gasorin',zh:'汽油',tag:'交通',ex:'ガソリンを入れます。（加油。）'},
+  {jp:'タイヤ',reading:'taiya',zh:'輪胎',tag:'交通',ex:'タイヤがパンクした。（輪胎爆胎了。）'},
+  {jp:'シートベルト',reading:'shiitoruberuto',zh:'安全帶',tag:'交通',ex:'シートベルトをしてください。（請繫安全帶。）'},
+  {jp:'ガイドブック',reading:'gaidobukku',zh:'旅遊書',tag:'旅遊',ex:'ガイドブックを買いました。（買了旅遊書。）'},
+  {jp:'リュック',reading:'ryukku',zh:'後背包',tag:'旅遊',ex:'リュックを背負います。（背後背包。）'},
+  {jp:'スーツケース',reading:'suutsukeesu',zh:'行李箱',tag:'旅遊',ex:'スーツケースを持ちます。（帶行李箱。）'},
+  {jp:'クレジットカード',reading:'kurejittokaaado',zh:'信用卡',tag:'購物',ex:'クレジットカードで払います。（用信用卡付款。）'},
+  {jp:'サービス',reading:'saabisu',zh:'服務',tag:'購物',ex:'サービスがいいです。（服務很好。）'},
+  {jp:'キャンセル',reading:'kyanseru',zh:'取消',tag:'購物',ex:'予約をキャンセルします。（取消預訂。）'},
+  {jp:'チェック',reading:'chekku',zh:'確認',tag:'生活',ex:'チェックしてください。（請確認。）'},
+  {jp:'コピー',reading:'kopii',zh:'影印',tag:'工作',ex:'コピーしてください。（請影印。）'},
+  {jp:'ファイル',reading:'fairu',zh:'檔案',tag:'工作',ex:'ファイルを保存します。（保存檔案。）'},
+  {jp:'メモ',reading:'memo',zh:'備忘錄',tag:'工作',ex:'メモを取ります。（做筆記。）'},
+  {jp:'ミス',reading:'misu',zh:'錯誤',tag:'工作',ex:'ミスをしてしまった。（犯了錯誤。）'},
+  {jp:'チーム',reading:'chiimu',zh:'團隊',tag:'工作',ex:'チームで働きます。（團隊合作。）'},
+  {jp:'リーダー',reading:'riidaa',zh:'領導者',tag:'工作',ex:'チームのリーダーです。（是團隊的領導者。）'},
+  {jp:'マナー',reading:'manaa',zh:'禮節',tag:'社交',ex:'マナーを守ります。（遵守禮節。）'},
+  {jp:'ルール',reading:'ruuru',zh:'規則',tag:'社交',ex:'ルールに従います。（遵守規則。）'},
+  {jp:'サイン',reading:'sain',zh:'簽名',tag:'社交',ex:'サインをください。（請給我簽名。）'},
+];
+
+var quizMode = 'type';
+var listenSource = 'kana';
+
+function setQuizMode(mode) {
+  quizMode = mode;
+  document.getElementById('mode-btn-type').classList.toggle('active', mode === 'type');
+  document.getElementById('mode-btn-listen').classList.toggle('active', mode === 'listen');
+  document.getElementById('listen-source-wrap').style.display = mode === 'listen' ? 'block' : 'none';
+  initQuiz();
+}
+
+function setListenSource(src, btn) {
+  listenSource = src;
+  document.getElementById('src-btn-kana').classList.toggle('active', src === 'kana');
+  document.getElementById('src-btn-vocab').classList.toggle('active', src === 'vocab');
+  document.getElementById('listen-theme-select').style.display = src === 'vocab' ? 'inline-block' : 'none';
+  initQuiz();
 }
 
 // ==================== INIT ====================
 buildKanaGrid(hiragana, 'hiragana-grid', 'h');
 buildKanaGrid(katakana, 'katakana-grid', 'k');
 renderVocabCards(pickRandom(vocabDB['日常生活'], 10));
+document.querySelector('.theme-chip').classList.add('active');
 buildGrammar();
 updateXP(0);
 </script>
