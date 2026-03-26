@@ -6,634 +6,150 @@
 <title>にほんご学習 — 日文學習</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+TC:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #1a1015;
-    --paper: #faf6f0;
-    --red: #c0392b;
-    --red-light: #e8c0bb;
-    --gold: #c8972a;
-    --gold-light: #f0e4c0;
-    --mist: #e8e2d8;
-    --shadow: rgba(26,16,21,0.12);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'Noto Sans TC', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Background texture */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a1015' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Header */
-  header {
-    position: relative;
-    z-index: 1;
-    padding: 40px 60px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    border-bottom: 1px solid var(--mist);
-  }
-
-  .logo {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .logo-jp {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--red);
-    letter-spacing: 4px;
-  }
-
-  .logo-sub {
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--gold);
-    font-weight: 400;
-  }
-
-  .progress-bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 12px;
-    letter-spacing: 1px;
-    color: var(--ink);
-    opacity: 0.6;
-  }
-
-  .xp-badge {
-    background: var(--gold);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-  }
-
-  /* Navigation Tabs */
-  nav {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    gap: 0;
-    padding: 0 60px;
-    border-bottom: 2px solid var(--mist);
-    background: var(--paper);
-  }
-
-  .tab {
-    padding: 16px 28px;
-    cursor: pointer;
-    font-size: 13px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-weight: 400;
-    color: var(--ink);
-    opacity: 0.45;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
-    transition: all 0.3s ease;
-  }
-
-  .tab:hover { opacity: 0.75; }
-
-  .tab.active {
-    opacity: 1;
-    color: var(--red);
-    border-bottom-color: var(--red);
-    font-weight: 500;
-  }
-
-  /* Main content */
-  main {
-    position: relative;
-    z-index: 1;
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 48px 60px;
-  }
-
-  .section { display: none; }
-  .section.active { display: block; }
-
-  /* Section header */
-  .section-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 36px;
-    font-weight: 400;
-    margin-bottom: 8px;
-    color: var(--ink);
-  }
-
-  .section-title span {
-    font-family: 'Noto Serif JP', serif;
-    color: var(--red);
-    font-size: 20px;
-    margin-left: 12px;
-  }
-
-  .section-desc {
-    font-size: 14px;
-    color: var(--ink);
-    opacity: 0.5;
-    margin-bottom: 40px;
-    letter-spacing: 0.5px;
-  }
-
-  /* ---- HIRAGANA / KATAKANA GRID ---- */
-  .kana-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    margin-bottom: 48px;
-  }
-
-  .kana-card {
-    background: white;
-    border: 1px solid var(--mist);
-    border-radius: 8px;
-    padding: 20px 10px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: 0 2px 8px var(--shadow);
-  }
-
-  .kana-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px var(--shadow);
-    border-color: var(--red-light);
-  }
-
-  .kana-card.learned {
-    background: var(--gold-light);
-    border-color: var(--gold);
-  }
-
-  .kana-char {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 32px;
-    color: var(--ink);
-    display: block;
-    margin-bottom: 6px;
-  }
-
-  .kana-rom {
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--ink);
-    opacity: 0.45;
-  }
-
-  .kana-card.learned .kana-rom { color: var(--gold); opacity: 0.9; }
-
-  /* ---- VOCABULARY ---- */
-  .vocab-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .vocab-card {
-    background: white;
-    border: 1px solid var(--mist);
-    border-radius: 10px;
-    padding: 24px 28px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 2px 8px var(--shadow);
-  }
-
-  .vocab-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 4px;
-    background: var(--red);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .vocab-card:hover::before { opacity: 1; }
-
-  .vocab-card:hover {
-    transform: translateX(4px);
-    box-shadow: 0 6px 20px var(--shadow);
-  }
-
-  .vocab-jp {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 26px;
-    color: var(--ink);
-    margin-bottom: 4px;
-  }
-
-  .vocab-reading {
-    font-size: 12px;
-    color: var(--red);
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-  }
-
-  .vocab-zh {
-    font-size: 15px;
-    color: var(--ink);
-    opacity: 0.6;
-  }
-
-  .vocab-tag {
-    position: absolute;
-    top: 16px; right: 16px;
-    font-size: 10px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    background: var(--mist);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--ink);
-    opacity: 0.5;
-  }
-
-  .vocab-example {
-    font-size: 12px;
-    color: var(--ink);
-    opacity: 0;
-    max-height: 0;
-    overflow: hidden;
-    transition: all 0.4s ease;
-    margin-top: 0;
-    font-style: italic;
-    border-top: 1px solid transparent;
-  }
-
-  .vocab-card.expanded .vocab-example {
-    opacity: 0.6;
-    max-height: 60px;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top-color: var(--mist);
-  }
-
-  .speak-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: none;
-    border: 1px solid var(--mist);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 11px;
-    letter-spacing: 1px;
-    color: var(--ink);
-    opacity: 0.55;
-    cursor: pointer;
-    font-family: inherit;
-    margin-top: 10px;
-    transition: all 0.2s ease;
-  }
-
-  .speak-btn:hover { opacity: 1; border-color: var(--red); color: var(--red); }
-  .speak-btn.speaking { opacity: 1; border-color: var(--gold); color: var(--gold); animation: pulse 0.8s infinite; }
-
-  @keyframes pulse {
-    0%,100% { transform: scale(1); }
-    50% { transform: scale(1.04); }
-  }
-
-  /* ---- QUIZ ---- */
-  .quiz-container {
-    max-width: 560px;
-    margin: 0 auto;
-  }
-
-  .quiz-progress {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 40px;
-  }
-
-  .quiz-dot {
-    height: 4px;
-    flex: 1;
-    border-radius: 2px;
-    background: var(--mist);
-    transition: background 0.3s ease;
-  }
-
-  .quiz-dot.done { background: var(--red); }
-  .quiz-dot.current { background: var(--gold); }
-
-  .quiz-question {
-    text-align: center;
-    margin-bottom: 48px;
-    animation: fadeUp 0.4s ease;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .quiz-char {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 96px;
-    color: var(--ink);
-    display: block;
-    line-height: 1;
-    margin-bottom: 12px;
-  }
-
-  .quiz-prompt {
-    font-size: 13px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--ink);
-    opacity: 0.4;
-  }
-
-  .quiz-input-wrap {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .quiz-input {
-    flex: 1;
-    background: white;
-    border: 2px solid var(--mist);
-    padding: 16px 20px;
-    border-radius: 8px;
-    font-size: 18px;
-    font-family: inherit;
-    letter-spacing: 3px;
-    color: var(--ink);
-    outline: none;
-    transition: border-color 0.2s ease;
-    box-shadow: 0 2px 8px var(--shadow);
-    text-transform: lowercase;
-  }
-
-  .quiz-input:focus { border-color: var(--gold); }
-  .quiz-input.correct { border-color: #4caf50; background: #e8f5e9; color: #2e7d32; }
-  .quiz-input.wrong { border-color: #ef9a9a; background: #ffebee; color: #c62828; }
-  .quiz-input:disabled { cursor: default; }
-
-  .quiz-submit {
-    background: var(--ink);
-    color: white;
-    border: none;
-    padding: 16px 24px;
-    border-radius: 8px;
-    font-size: 13px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-  }
-
-  .quiz-submit:hover:not(:disabled) { background: var(--red); }
-  .quiz-submit:disabled { opacity: 0.4; cursor: default; }
-
-  /* 20-question review table */
-  .quiz-review {
-    margin-top: 32px;
-    border: 1px solid var(--mist);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-
-  .quiz-review-row {
-    display: grid;
-    grid-template-columns: 60px 1fr 1fr 60px;
-    padding: 10px 20px;
-    font-size: 13px;
-    border-bottom: 1px solid var(--mist);
-    align-items: center;
-    gap: 12px;
-  }
-
-  .quiz-review-row:last-child { border-bottom: none; }
-  .quiz-review-row.header { background: var(--mist); font-weight: 500; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
-  .quiz-review-row.ok { background: #f1f9f1; }
-  .quiz-review-row.ng { background: #fff5f5; }
-
-  .review-char { font-family: 'Noto Serif JP', serif; font-size: 22px; }
-  .review-correct { color: #2e7d32; }
-  .review-wrong { color: var(--red); }
-  .review-icon { text-align: center; font-size: 16px; }
-
-  .quiz-feedback {
-    text-align: center;
-    margin-top: 28px;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    min-height: 24px;
-    transition: all 0.3s ease;
-  }
-
-  .quiz-feedback.ok { color: #2e7d32; }
-  .quiz-feedback.fail { color: var(--red); }
-
-  .next-btn {
-    display: block;
-    margin: 28px auto 0;
-    background: var(--red);
-    color: white;
-    border: none;
-    padding: 14px 40px;
-    border-radius: 4px;
-    font-size: 13px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 16px rgba(192,57,43,0.3);
-  }
-
-  .next-btn:hover { background: #a93226; transform: translateY(-2px); }
-  .next-btn:active { transform: translateY(0); }
-
-  /* Score display */
-  .score-display {
-    text-align: center;
-    padding: 60px 0;
-    animation: fadeUp 0.5s ease;
-  }
-
-  .score-number {
-    font-family: 'DM Serif Display', serif;
-    font-size: 80px;
-    color: var(--red);
-    line-height: 1;
-  }
-
-  .score-label {
-    font-size: 14px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    opacity: 0.5;
-    margin: 12px 0 32px;
-  }
-
-  /* ---- VOCAB CONTROLS ---- */
-  .vocab-controls { margin-bottom: 28px; display: flex; flex-direction: column; gap: 14px; }
-  .theme-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .theme-chip {
-    background: white; border: 1.5px solid var(--mist); border-radius: 20px;
-    padding: 7px 16px; font-size: 13px; font-family: inherit; cursor: pointer;
-    color: var(--ink); opacity: 0.6; transition: all 0.2s ease; font-weight: 400;
-  }
-  .theme-chip:hover { opacity: 1; border-color: var(--gold); }
-  .theme-chip.active { background: var(--ink); color: white; border-color: var(--ink); opacity: 1; }
-  .vocab-toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-  .custom-theme-wrap { display: flex; border: 1.5px solid var(--mist); border-radius: 6px; overflow: hidden; background: white; }
-  .custom-theme-input { border: none; padding: 9px 14px; font-size: 13px; font-family: inherit; outline: none; color: var(--ink); background: transparent; width: 160px; }
-  .custom-theme-btn { background: var(--mist); border: none; padding: 9px 14px; font-size: 12px; font-weight: 500; letter-spacing: 1px; cursor: pointer; font-family: inherit; color: var(--ink); transition: background 0.2s ease; }
-  .custom-theme-btn:hover { background: var(--gold); color: white; }
-  .generate-btn {
-    display: inline-flex; align-items: center; gap: 7px; background: var(--red);
-    color: white; border: none; padding: 10px 20px; border-radius: 6px;
-    font-size: 13px; letter-spacing: 1px; cursor: pointer; font-family: inherit;
-    font-weight: 500; transition: all 0.2s ease; box-shadow: 0 3px 12px rgba(192,57,43,0.3);
-  }
-  .generate-btn:hover:not(:disabled) { background: #a93226; transform: translateY(-1px); }
-  .generate-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
-  #vocab-status { text-align: center; padding: 40px 0; font-size: 14px; opacity: 0.45; letter-spacing: 0.5px; display: none; }
-  #vocab-status.visible { display: block; }
-  .vocab-loading { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 48px 0; }
-  .dot-spin { width: 8px; height: 8px; border-radius: 50%; background: var(--red); animation: dotBounce 1.2s infinite ease-in-out; }
-  .dot-spin:nth-child(2) { animation-delay: 0.2s; background: var(--gold); }
-  .dot-spin:nth-child(3) { animation-delay: 0.4s; background: var(--ink); opacity: 0.4; }
-  @keyframes dotBounce { 0%,80%,100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1.2); opacity: 1; } }
-  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-  /* ---- GRAMMAR ---- */
-  .grammar-list { display: flex; flex-direction: column; gap: 20px; }
-
-  .grammar-item {
-    background: white;
-    border: 1px solid var(--mist);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px var(--shadow);
-  }
-
-  .grammar-header {
-    padding: 22px 28px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background 0.2s ease;
-  }
-
-  .grammar-header:hover { background: var(--gold-light); }
-
-  .grammar-title-jp {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 20px;
-    color: var(--red);
-    margin-bottom: 4px;
-  }
-
-  .grammar-title-zh {
-    font-size: 13px;
-    opacity: 0.5;
-    letter-spacing: 0.5px;
-  }
-
-  .grammar-toggle {
-    font-size: 20px;
-    opacity: 0.3;
-    transition: transform 0.3s ease;
-  }
-
-  .grammar-item.open .grammar-toggle { transform: rotate(45deg); opacity: 0.7; }
-
-  .grammar-body {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
-    padding: 0 28px;
-  }
-
-  .grammar-item.open .grammar-body { max-height: 400px; padding-bottom: 24px; }
-
-  .grammar-pattern {
-    background: var(--mist);
-    padding: 12px 18px;
-    border-radius: 6px;
-    font-family: 'Noto Serif JP', serif;
-    font-size: 15px;
-    color: var(--red);
-    margin-bottom: 16px;
-    letter-spacing: 1px;
-  }
-
-  .grammar-examples { display: flex; flex-direction: column; gap: 12px; }
-
-  .grammar-ex {
-    border-left: 3px solid var(--red-light);
-    padding-left: 16px;
-  }
-
-  .grammar-ex-jp {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 16px;
-    margin-bottom: 4px;
-  }
-
-  .grammar-ex-zh { font-size: 13px; opacity: 0.5; }
-
-  /* Responsive */
-  @media (max-width: 680px) {
-    header { padding: 24px 20px 20px; }
-    nav { padding: 0 20px; }
-    main { padding: 32px 20px; }
-    .kana-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
-    .kana-card { padding: 14px 6px; }
-    .kana-char { font-size: 24px; }
-    .vocab-grid { grid-template-columns: 1fr; }
-    .quiz-char { font-size: 72px; }
-    .tab { padding: 12px 16px; font-size: 11px; }
-  }
+:root {
+  --ink: #1a1015;
+  --paper: #faf6f0;
+  --red: #c0392b;
+  --red-light: #e8c0bb;
+  --gold: #c8972a;
+  --gold-light: #f0e4c0;
+  --mist: #e8e2d8;
+  --shadow: rgba(26,16,21,0.12);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--paper); color:var(--ink); font-family:'Noto Sans TC',sans-serif; font-weight:300; min-height:100vh; overflow-x:hidden; }
+body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a1015' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+
+/* HEADER */
+header { position:relative; z-index:1; padding:40px 60px 30px; display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--mist); }
+.logo-jp { font-family:'Noto Serif JP',serif; font-size:28px; font-weight:700; color:var(--red); letter-spacing:4px; }
+.logo-sub { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); }
+.xp-area { display:flex; align-items:center; gap:12px; font-size:12px; letter-spacing:1px; opacity:0.6; }
+.xp-badge { background:var(--gold); color:white; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:500; opacity:1; }
+
+/* NAV */
+nav { position:relative; z-index:1; display:flex; padding:0 60px; border-bottom:2px solid var(--mist); background:var(--paper); }
+.tab { padding:16px 28px; cursor:pointer; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink); opacity:0.45; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all 0.3s; }
+.tab:hover { opacity:0.75; }
+.tab.active { opacity:1; color:var(--red); border-bottom-color:var(--red); font-weight:500; }
+
+/* MAIN */
+main { position:relative; z-index:1; max-width:960px; margin:0 auto; padding:48px 60px; }
+.section { display:none; }
+.section.active { display:block; }
+.section-title { font-family:'DM Serif Display',serif; font-size:36px; font-weight:400; margin-bottom:8px; }
+.section-title span { font-family:'Noto Serif JP',serif; color:var(--red); font-size:20px; margin-left:12px; }
+.section-desc { font-size:14px; opacity:0.5; margin-bottom:40px; letter-spacing:0.5px; }
+
+/* KANA */
+.kana-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:48px; }
+.kana-card { background:white; border:1px solid var(--mist); border-radius:8px; padding:20px 10px; text-align:center; cursor:pointer; transition:all 0.25s; box-shadow:0 2px 8px var(--shadow); }
+.kana-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px var(--shadow); border-color:var(--red-light); }
+.kana-card.learned { background:var(--gold-light); border-color:var(--gold); }
+.kana-char { font-family:'Noto Serif JP',serif; font-size:32px; display:block; margin-bottom:6px; }
+.kana-rom { font-size:11px; letter-spacing:2px; text-transform:uppercase; opacity:0.45; }
+.kana-card.learned .kana-rom { color:var(--gold); opacity:0.9; }
+
+/* VOCAB */
+.vocab-controls { margin-bottom:28px; display:flex; flex-direction:column; gap:14px; }
+.theme-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.theme-chip { background:white; border:1.5px solid var(--mist); border-radius:20px; padding:7px 16px; font-size:13px; font-family:inherit; cursor:pointer; color:var(--ink); opacity:0.6; transition:all 0.2s; }
+.theme-chip:hover { opacity:1; border-color:var(--gold); }
+.theme-chip.active { background:var(--ink); color:white; border-color:var(--ink); opacity:1; }
+.shuffle-btn { display:inline-flex; align-items:center; gap:7px; background:var(--red); color:white; border:none; padding:10px 20px; border-radius:6px; font-size:13px; letter-spacing:1px; cursor:pointer; font-family:inherit; font-weight:500; transition:all 0.2s; box-shadow:0 3px 12px rgba(192,57,43,0.3); }
+.shuffle-btn:hover { background:#a93226; transform:translateY(-1px); }
+.vocab-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.vocab-card { background:white; border:1px solid var(--mist); border-radius:10px; padding:24px 28px; cursor:pointer; transition:all 0.3s; position:relative; overflow:hidden; box-shadow:0 2px 8px var(--shadow); }
+.vocab-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--red); opacity:0; transition:opacity 0.3s; }
+.vocab-card:hover::before { opacity:1; }
+.vocab-card:hover { transform:translateX(4px); box-shadow:0 6px 20px var(--shadow); }
+.vocab-jp { font-family:'Noto Serif JP',serif; font-size:26px; margin-bottom:4px; }
+.vocab-reading { font-size:12px; color:var(--red); letter-spacing:1px; margin-bottom:10px; }
+.vocab-zh { font-size:15px; opacity:0.6; }
+.vocab-tag { position:absolute; top:16px; right:16px; font-size:10px; padding:3px 10px; border-radius:20px; background:var(--mist); letter-spacing:1px; text-transform:uppercase; opacity:0.5; }
+.vocab-example { font-size:12px; opacity:0; max-height:0; overflow:hidden; transition:all 0.4s; margin-top:0; font-style:italic; border-top:1px solid transparent; }
+.vocab-card.expanded .vocab-example { opacity:0.6; max-height:60px; margin-top:12px; padding-top:12px; border-top-color:var(--mist); }
+.speak-btn { display:inline-flex; align-items:center; gap:5px; background:none; border:1px solid var(--mist); border-radius:20px; padding:4px 12px; font-size:11px; letter-spacing:1px; color:var(--ink); opacity:0.55; cursor:pointer; font-family:inherit; margin-top:10px; transition:all 0.2s; }
+.speak-btn:hover { opacity:1; border-color:var(--red); color:var(--red); }
+.speak-btn.speaking { opacity:1; border-color:var(--gold); color:var(--gold); animation:pulse 0.8s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+
+/* GRAMMAR */
+.grammar-list { display:flex; flex-direction:column; gap:20px; }
+.grammar-item { background:white; border:1px solid var(--mist); border-radius:10px; overflow:hidden; box-shadow:0 2px 8px var(--shadow); }
+.grammar-header { padding:22px 28px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:background 0.2s; }
+.grammar-header:hover { background:var(--gold-light); }
+.grammar-title-jp { font-family:'Noto Serif JP',serif; font-size:20px; color:var(--red); margin-bottom:4px; }
+.grammar-title-zh { font-size:13px; opacity:0.5; }
+.grammar-toggle { font-size:20px; opacity:0.3; transition:transform 0.3s; }
+.grammar-item.open .grammar-toggle { transform:rotate(45deg); opacity:0.7; }
+.grammar-body { max-height:0; overflow:hidden; transition:max-height 0.4s; padding:0 28px; }
+.grammar-item.open .grammar-body { max-height:400px; padding-bottom:24px; }
+.grammar-pattern { background:var(--mist); padding:12px 18px; border-radius:6px; font-family:'Noto Serif JP',serif; font-size:15px; color:var(--red); margin-bottom:16px; }
+.grammar-examples { display:flex; flex-direction:column; gap:12px; }
+.grammar-ex { border-left:3px solid var(--red-light); padding-left:16px; }
+.grammar-ex-jp { font-family:'Noto Serif JP',serif; font-size:16px; margin-bottom:4px; }
+.grammar-ex-zh { font-size:13px; opacity:0.5; }
+
+/* QUIZ */
+.quiz-container { max-width:560px; margin:0 auto; }
+.quiz-progress { display:flex; gap:6px; margin-bottom:40px; }
+.quiz-dot { height:4px; flex:1; border-radius:2px; background:var(--mist); transition:background 0.3s; }
+.quiz-dot.done { background:var(--red); }
+.quiz-dot.current { background:var(--gold); }
+.quiz-question { text-align:center; margin-bottom:48px; animation:fadeUp 0.4s ease; }
+.quiz-char { font-family:'Noto Serif JP',serif; font-size:96px; display:block; line-height:1; margin-bottom:12px; }
+.quiz-prompt { font-size:13px; letter-spacing:2px; text-transform:uppercase; opacity:0.4; }
+.quiz-input-wrap { display:flex; gap:10px; align-items:center; }
+.quiz-input { flex:1; background:white; border:2px solid var(--mist); padding:16px 20px; border-radius:8px; font-size:18px; font-family:inherit; letter-spacing:3px; color:var(--ink); outline:none; transition:border-color 0.2s; box-shadow:0 2px 8px var(--shadow); }
+.quiz-input:focus { border-color:var(--gold); }
+.quiz-input.correct { border-color:#4caf50; background:#e8f5e9; color:#2e7d32; }
+.quiz-input.wrong { border-color:#ef9a9a; background:#ffebee; color:#c62828; }
+.quiz-input:disabled { cursor:default; }
+.quiz-submit { background:var(--ink); color:white; border:none; padding:16px 24px; border-radius:8px; font-size:13px; letter-spacing:2px; cursor:pointer; font-family:inherit; font-weight:500; transition:all 0.2s; white-space:nowrap; }
+.quiz-submit:hover:not(:disabled) { background:var(--red); }
+.quiz-submit:disabled { opacity:0.4; cursor:default; }
+.quiz-feedback { text-align:center; margin-top:28px; font-size:14px; min-height:24px; }
+.quiz-feedback.ok { color:#2e7d32; }
+.quiz-feedback.fail { color:var(--red); }
+.next-btn { display:block; margin:28px auto 0; background:var(--red); color:white; border:none; padding:14px 40px; border-radius:4px; font-size:13px; letter-spacing:3px; text-transform:uppercase; cursor:pointer; font-family:inherit; font-weight:500; transition:all 0.3s; box-shadow:0 4px 16px rgba(192,57,43,0.3); }
+.next-btn:hover { background:#a93226; transform:translateY(-2px); }
+.quiz-review { margin-top:32px; border:1px solid var(--mist); border-radius:10px; overflow:hidden; }
+.quiz-review-row { display:grid; grid-template-columns:60px 1fr 1fr 60px; padding:10px 20px; font-size:13px; border-bottom:1px solid var(--mist); align-items:center; gap:12px; }
+.quiz-review-row:last-child { border-bottom:none; }
+.quiz-review-row.header { background:var(--mist); font-weight:500; font-size:11px; letter-spacing:1px; text-transform:uppercase; }
+.quiz-review-row.ok { background:#f1f9f1; }
+.quiz-review-row.ng { background:#fff5f5; }
+.review-char { font-family:'Noto Serif JP',serif; font-size:22px; }
+.review-correct { color:#2e7d32; }
+.review-wrong { color:var(--red); }
+.score-display { text-align:center; padding:60px 0; animation:fadeUp 0.5s ease; }
+.score-number { font-family:'DM Serif Display',serif; font-size:80px; color:var(--red); line-height:1; }
+.score-label { font-size:14px; letter-spacing:3px; text-transform:uppercase; opacity:0.5; margin:12px 0 32px; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+@media (max-width:680px) {
+  header { padding:24px 20px 20px; }
+  nav { padding:0 20px; }
+  main { padding:32px 20px; }
+  .kana-grid { gap:8px; }
+  .kana-card { padding:14px 6px; }
+  .kana-char { font-size:24px; }
+  .vocab-grid { grid-template-columns:1fr; }
+  .quiz-char { font-size:72px; }
+  .tab { padding:12px 16px; font-size:11px; }
+}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">
+  <div>
     <div class="logo-jp">にほんご</div>
     <div class="logo-sub">日文自學帳 · Japanese Notebook</div>
   </div>
-  <div class="progress-bar">
+  <div class="xp-area">
     <span id="xp-count">0 XP</span>
     <span class="xp-badge" id="level-badge">初心者</span>
   </div>
@@ -666,9 +182,9 @@
   <!-- VOCABULARY -->
   <section class="section" id="vocab">
     <h2 class="section-title">基礎單字 <span>たんご</span></h2>
-    <p class="section-desc">選擇主題，每次隨機顯示 10 個單字</p>
+    <p class="section-desc">選擇主題，每次隨機顯示 10 個單字，點擊卡片查看例句</p>
     <div class="vocab-controls">
-      <div class="theme-chips" id="theme-chips">
+      <div class="theme-chips">
         <button class="theme-chip active" onclick="selectTheme(this,'日常生活')">日常生活</button>
         <button class="theme-chip" onclick="selectTheme(this,'飲食料理')">飲食料理</button>
         <button class="theme-chip" onclick="selectTheme(this,'旅遊交通')">旅遊交通</button>
@@ -678,12 +194,11 @@
         <button class="theme-chip" onclick="selectTheme(this,'家庭關係')">家庭關係</button>
         <button class="theme-chip" onclick="selectTheme(this,'身體健康')">身體健康</button>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
-        <button class="generate-btn" onclick="shuffleVocab()">
+      <div>
+        <button class="shuffle-btn" onclick="shuffleVocab()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
           換一批
         </button>
-        <span id="vocab-count" style="font-size:12px;opacity:0.4;letter-spacing:1px;"></span>
       </div>
     </div>
     <div class="vocab-grid" id="vocab-grid"></div>
@@ -699,14 +214,15 @@
   <!-- QUIZ -->
   <section class="section" id="quiz">
     <h2 class="section-title">測驗 <span>テスト</span></h2>
-    <p class="section-desc">測試你的假名知識</p>
+    <p class="section-desc">看假名輸入羅馬拼音，共 20 題</p>
     <div class="quiz-container" id="quiz-container"></div>
   </section>
 
 </main>
 
 <script>
-// ---- DATA ----
+// ==================== DATA ====================
+
 const hiragana = [
   {char:'あ',rom:'a'},{char:'い',rom:'i'},{char:'う',rom:'u'},{char:'え',rom:'e'},{char:'お',rom:'o'},
   {char:'か',rom:'ka'},{char:'き',rom:'ki'},{char:'く',rom:'ku'},{char:'け',rom:'ke'},{char:'こ',rom:'ko'},
@@ -733,123 +249,6 @@ const katakana = [
   {char:'ワ',rom:'wa'},{char:'',rom:''},{char:'ヲ',rom:'wo'},{char:'',rom:''},{char:'ン',rom:'n'},
 ];
 
-const grammar = [
-  {
-    jp:'〜は〜です',zh:'主題助詞「は」+ 「です」（是）',
-    pattern:'[主語] は [名詞/形容詞] です',
-    examples:[
-      {jp:'わたしは学生です。',zh:'我是學生。'},
-      {jp:'これは本です。',zh:'這是書。'},
-      {jp:'東京は大きいです。',zh:'東京很大。'},
-    ]
-  },
-  {
-    jp:'〜を〜します',zh:'受格助詞「を」標示動詞的對象',
-    pattern:'[主語] は [名詞] を [動詞]',
-    examples:[
-      {jp:'りんごを食べます。',zh:'（我）吃蘋果。'},
-      {jp:'音楽を聴きます。',zh:'（我）聽音樂。'},
-      {jp:'日本語を勉強します。',zh:'（我）學習日文。'},
-    ]
-  },
-  {
-    jp:'〜に行きます',zh:'方向助詞「に」表示移動目的地',
-    pattern:'[場所] に 行きます／来ます／帰ります',
-    examples:[
-      {jp:'学校に行きます。',zh:'（我）去學校。'},
-      {jp:'日本に来ました。',zh:'（我）來到了日本。'},
-      {jp:'家に帰ります。',zh:'（我）回家。'},
-    ]
-  },
-  {
-    jp:'〜ですか？',zh:'疑問句語尾「か」',
-    pattern:'[文] ですか？ / [動詞] ますか？',
-    examples:[
-      {jp:'これはなんですか？',zh:'這是什麼？'},
-      {jp:'今、忙しいですか？',zh:'你現在忙嗎？'},
-      {jp:'一緒に行きますか？',zh:'要一起去嗎？'},
-    ]
-  },
-  {
-    jp:'〜たい',zh:'想要做〜（意志表現）',
-    pattern:'[動詞ます形語幹] + たいです',
-    examples:[
-      {jp:'日本に行きたいです。',zh:'我想去日本。'},
-      {jp:'寿司を食べたいです。',zh:'我想吃壽司。'},
-      {jp:'もっと勉強したいです。',zh:'我想多學一點。'},
-    ]
-  },
-];
-
-// ---- STATE ----
-let learned = new Set(JSON.parse(localStorage.getItem('learned') || '[]'));
-let xp = parseInt(localStorage.getItem('xp') || '0');
-let quizData = [];
-let quizIndex = 0;
-let quizScore = 0;
-let quizAnswered = false;
-
-// ---- XP / LEVEL ----
-function updateXP(add = 0) {
-  xp += add;
-  localStorage.setItem('xp', xp);
-  document.getElementById('xp-count').textContent = xp + ' XP';
-  const levels = [[0,'初心者'],[50,'入門者'],[150,'初級者'],[300,'中級者'],[600,'上級者']];
-  let level = '初心者';
-  for (const [threshold, name] of levels) { if (xp >= threshold) level = name; }
-  document.getElementById('level-badge').textContent = level;
-}
-
-// ---- TABS ----
-function showTab(name) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(name).classList.add('active');
-  const tabs = ['hiragana','katakana','vocab','grammar','quiz'];
-  document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
-  if (name === 'quiz') initQuiz();
-}
-
-// ---- KANA GRIDS ----
-function buildKanaGrid(data, containerId, prefix) {
-  const grid = document.getElementById(containerId);
-  data.forEach((k, i) => {
-    const card = document.createElement('div');
-    card.className = 'kana-card' + (k.char === '' ? ' empty' : '') + (learned.has(prefix+i) ? ' learned' : '');
-    if (k.char === '') { card.style.visibility = 'hidden'; grid.appendChild(card); return; }
-    card.innerHTML = `<span class="kana-char">${k.char}</span><span class="kana-rom">${k.rom}</span>`;
-    card.onclick = () => {
-      if (learned.has(prefix+i)) {
-        learned.delete(prefix+i);
-        card.classList.remove('learned');
-      } else {
-        learned.add(prefix+i);
-        card.classList.add('learned');
-        updateXP(2);
-        card.style.animation = 'fadeUp 0.3s ease';
-        setTimeout(() => card.style.animation = '', 300);
-      }
-      localStorage.setItem('learned', JSON.stringify([...learned]));
-    };
-    grid.appendChild(card);
-  });
-}
-
-// ---- VOCAB ----
-function speak(text, btn) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'ja-JP';
-  utter.rate = 0.85;
-  if (btn) {
-    btn.classList.add('speaking');
-    utter.onend = () => btn.classList.remove('speaking');
-  }
-  window.speechSynthesis.speak(utter);
-}
-
-// ---- VOCAB DATABASE (100 words × 8 themes) ----
 const vocabDB = {
   '日常生活': [
     {jp:'ありがとう',reading:'arigatou',zh:'謝謝',tag:'日常',ex:'ありがとうございます。（非常感謝。）'},
@@ -862,15 +261,15 @@ const vocabDB = {
     {jp:'大丈夫',reading:'daijoubu',zh:'沒問題',tag:'日常',ex:'大丈夫ですか？（你還好嗎？）'},
     {jp:'わかった',reading:'wakatta',zh:'明白了',tag:'日常',ex:'わかった、やってみる。（明白了，我來試試。）'},
     {jp:'ちょっと待って',reading:'chotto matte',zh:'等一下',tag:'日常',ex:'ちょっと待ってください。（請稍等一下。）'},
-    {jp:'どうぞ',reading:'douzo',zh:'請／請便',tag:'日常',ex:'どうぞ、座ってください。（請坐。）'},
+    {jp:'どうぞ',reading:'douzo',zh:'請便',tag:'日常',ex:'どうぞ、座ってください。（請坐。）'},
     {jp:'どういたしまして',reading:'douitashimashite',zh:'不客氣',tag:'日常',ex:'どういたしまして。（不客氣。）'},
-    {jp:'お願いします',reading:'onegaishimasu',zh:'拜託／請',tag:'日常',ex:'よろしくお願いします。（請多關照。）'},
+    {jp:'お願いします',reading:'onegaishimasu',zh:'拜託',tag:'日常',ex:'よろしくお願いします。（請多關照。）'},
     {jp:'ごめんなさい',reading:'gomennasai',zh:'對不起',tag:'日常',ex:'ごめんなさい、遅れました。（對不起，我遲到了。）'},
     {jp:'また明日',reading:'mata ashita',zh:'明天見',tag:'問候',ex:'また明日！（明天見！）'},
     {jp:'行ってきます',reading:'ittekimasu',zh:'我出門了',tag:'日常',ex:'行ってきます！（我出門了！）'},
     {jp:'ただいま',reading:'tadaima',zh:'我回來了',tag:'日常',ex:'ただいま！（我回來了！）'},
     {jp:'いただきます',reading:'itadakimasu',zh:'開動了',tag:'日常',ex:'いただきます！（開動了！）'},
-    {jp:'ごちそうさま',reading:'gochisousama',zh:'吃飽了',tag:'日常',ex:'ごちそうさまでした。（謝謝款待。）'},
+    {jp:'ごちそうさま',reading:'gochisousama',zh:'謝謝款待',tag:'日常',ex:'ごちそうさまでした。（謝謝款待。）'},
     {jp:'もちろん',reading:'mochiron',zh:'當然',tag:'日常',ex:'もちろん、手伝います。（當然，我來幫忙。）'},
     {jp:'本当に',reading:'hontou ni',zh:'真的',tag:'日常',ex:'本当にありがとう。（真的很謝謝你。）'},
     {jp:'少し',reading:'sukoshi',zh:'一點點',tag:'日常',ex:'少し待ってください。（請稍等一下。）'},
@@ -885,35 +284,20 @@ const vocabDB = {
     {jp:'朝',reading:'asa',zh:'早上',tag:'時間',ex:'朝ごはんを食べた。（吃了早餐。）'},
     {jp:'夜',reading:'yoru',zh:'晚上',tag:'時間',ex:'夜は静かです。（晚上很安靜。）'},
     {jp:'家',reading:'ie',zh:'家',tag:'場所',ex:'家に帰ります。（回家。）'},
-    {jp:'部屋',reading:'heya',zh:'房間',tag:'場所',ex:'部屋を片付けます。（整理房間。）'},
     {jp:'電話',reading:'denwa',zh:'電話',tag:'物品',ex:'電話をかけます。（打電話。）'},
     {jp:'お金',reading:'okane',zh:'錢',tag:'物品',ex:'お金が足りない。（錢不夠。）'},
     {jp:'時間',reading:'jikan',zh:'時間',tag:'時間',ex:'時間がありますか？（你有時間嗎？）'},
     {jp:'名前',reading:'namae',zh:'名字',tag:'日常',ex:'お名前は何ですか？（您叫什麼名字？）'},
-    {jp:'言葉',reading:'kotoba',zh:'語言／詞語',tag:'日常',ex:'難しい言葉ですね。（這是個難詞呢。）'},
     {jp:'天気',reading:'tenki',zh:'天氣',tag:'日常',ex:'今日は天気がいいですね。（今天天氣真好。）'},
     {jp:'何',reading:'nani',zh:'什麼',tag:'疑問',ex:'これは何ですか？（這是什麼？）'},
-    {jp:'誰',reading:'dare',zh:'誰',tag:'疑問',ex:'あの人は誰ですか？（那個人是誰？）'},
     {jp:'どこ',reading:'doko',zh:'哪裡',tag:'疑問',ex:'トイレはどこですか？（廁所在哪裡？）'},
     {jp:'いつ',reading:'itsu',zh:'什麼時候',tag:'疑問',ex:'いつ来ますか？（什麼時候來？）'},
-    {jp:'なぜ',reading:'naze',zh:'為什麼',tag:'疑問',ex:'なぜ泣いているの？（為什麼在哭？）'},
-    {jp:'どうやって',reading:'douyatte',zh:'怎麼做',tag:'疑問',ex:'どうやって行きますか？（怎麼去？）'},
-    {jp:'近く',reading:'chikaku',zh:'附近',tag:'場所',ex:'近くにコンビニがある。（附近有便利商店。）'},
-    {jp:'遠い',reading:'tooi',zh:'遠的',tag:'形容詞',ex:'駅は遠いですか？（車站遠嗎？）'},
     {jp:'暑い',reading:'atsui',zh:'熱的',tag:'形容詞',ex:'今日は暑いですね。（今天好熱呢。）'},
     {jp:'寒い',reading:'samui',zh:'冷的',tag:'形容詞',ex:'今日は寒いです。（今天好冷。）'},
-    {jp:'新しい',reading:'atarashii',zh:'新的',tag:'形容詞',ex:'新しい服を買いました。（買了新衣服。）'},
-    {jp:'古い',reading:'furui',zh:'舊的',tag:'形容詞',ex:'古いお寺があります。（有一座古廟。）'},
     {jp:'大きい',reading:'ookii',zh:'大的',tag:'形容詞',ex:'大きい犬ですね。（好大的狗呢。）'},
     {jp:'小さい',reading:'chiisai',zh:'小的',tag:'形容詞',ex:'小さい子供がいる。（有一個小孩。）'},
-    {jp:'高い',reading:'takai',zh:'高的／貴的',tag:'形容詞',ex:'このビルは高い。（這棟大樓很高。）'},
-    {jp:'安い',reading:'yasui',zh:'便宜的',tag:'形容詞',ex:'このお店は安い。（這家店很便宜。）'},
-    {jp:'速い',reading:'hayai',zh:'快的',tag:'形容詞',ex:'新幹線は速い。（新幹線很快。）'},
-    {jp:'遅い',reading:'osoi',zh:'慢的／晚的',tag:'形容詞',ex:'今日は遅く起きた。（今天起得很晚。）'},
-    {jp:'多い',reading:'ooi',zh:'多的',tag:'形容詞',ex:'人が多いですね。（人很多呢。）'},
-    {jp:'少ない',reading:'sukunai',zh:'少的',tag:'形容詞',ex:'時間が少ない。（時間很少。）'},
     {jp:'見る',reading:'miru',zh:'看',tag:'動詞',ex:'テレビを見ます。（看電視。）'},
-    {jp:'聞く',reading:'kiku',zh:'聽／問',tag:'動詞',ex:'音楽を聞きます。（聽音樂。）'},
+    {jp:'聞く',reading:'kiku',zh:'聽',tag:'動詞',ex:'音楽を聞きます。（聽音樂。）'},
     {jp:'話す',reading:'hanasu',zh:'說話',tag:'動詞',ex:'日本語で話します。（用日文說話。）'},
     {jp:'読む',reading:'yomu',zh:'讀',tag:'動詞',ex:'本を読みます。（讀書。）'},
     {jp:'書く',reading:'kaku',zh:'寫',tag:'動詞',ex:'手紙を書きます。（寫信。）'},
@@ -921,37 +305,51 @@ const vocabDB = {
     {jp:'来る',reading:'kuru',zh:'來',tag:'動詞',ex:'友達が来ます。（朋友要來了。）'},
     {jp:'帰る',reading:'kaeru',zh:'回去',tag:'動詞',ex:'家に帰ります。（回家。）'},
     {jp:'買う',reading:'kau',zh:'買',tag:'動詞',ex:'スーパーで買います。（在超市買。）'},
-    {jp:'使う',reading:'tsukau',zh:'使用',tag:'動詞',ex:'スマホを使います。（使用手機。）'},
-    {jp:'作る',reading:'tsukuru',zh:'製作',tag:'動詞',ex:'料理を作ります。（做料理。）'},
     {jp:'起きる',reading:'okiru',zh:'起床',tag:'動詞',ex:'七時に起きます。（七點起床。）'},
     {jp:'寝る',reading:'neru',zh:'睡覺',tag:'動詞',ex:'早く寝ます。（早點睡覺。）'},
-    {jp:'開ける',reading:'akeru',zh:'打開',tag:'動詞',ex:'窓を開けます。（打開窗戶。）'},
-    {jp:'閉める',reading:'shimeru',zh:'關閉',tag:'動詞',ex:'ドアを閉めます。（關門。）'},
-    {jp:'入る',reading:'hairu',zh:'進入',tag:'動詞',ex:'部屋に入ります。（進入房間。）'},
-    {jp:'出る',reading:'deru',zh:'出去',tag:'動詞',ex:'家を出ます。（出門。）'},
-    {jp:'会う',reading:'au',zh:'見面',tag:'動詞',ex:'友達に会います。（和朋友見面。）'},
-    {jp:'待つ',reading:'matsu',zh:'等待',tag:'動詞',ex:'バスを待ちます。（等公車。）'},
-    {jp:'知る',reading:'shiru',zh:'知道',tag:'動詞',ex:'この場所を知っていますか？（你知道這個地方嗎？）'},
-    {jp:'思う',reading:'omou',zh:'認為',tag:'動詞',ex:'そう思います。（我這樣認為。）'},
     {jp:'好き',reading:'suki',zh:'喜歡',tag:'形容詞',ex:'猫が好きです。（我喜歡貓。）'},
     {jp:'嫌い',reading:'kirai',zh:'討厭',tag:'形容詞',ex:'虫が嫌いです。（我討厭蟲。）'},
-    {jp:'欲しい',reading:'hoshii',zh:'想要',tag:'形容詞',ex:'新しいパソコンが欲しい。（想要新電腦。）'},
     {jp:'忙しい',reading:'isogashii',zh:'忙碌的',tag:'形容詞',ex:'今日は忙しいです。（今天很忙。）'},
-    {jp:'暇',reading:'hima',zh:'空閒',tag:'形容詞',ex:'今日は暇です。（今天很空閒。）'},
     {jp:'難しい',reading:'muzukashii',zh:'困難的',tag:'形容詞',ex:'日本語は難しいですね。（日文很難呢。）'},
-    {jp:'簡単',reading:'kantan',zh:'簡單的',tag:'形容詞',ex:'この問題は簡単です。（這道題很簡單。）'},
     {jp:'面白い',reading:'omoshiroi',zh:'有趣的',tag:'形容詞',ex:'この映画は面白い。（這部電影很有趣。）'},
-    {jp:'つまらない',reading:'tsumaranai',zh:'無聊的',tag:'形容詞',ex:'授業がつまらない。（課很無聊。）'},
-    {jp:'きれい',reading:'kirei',zh:'漂亮的／乾淨的',tag:'形容詞',ex:'きれいな花ですね。（好漂亮的花呢。）'},
-    {jp:'汚い',reading:'kitanai',zh:'髒的',tag:'形容詞',ex:'部屋が汚い。（房間很髒。）'},
+    {jp:'きれい',reading:'kirei',zh:'漂亮的',tag:'形容詞',ex:'きれいな花ですね。（好漂亮的花呢。）'},
     {jp:'もう一度',reading:'mou ichido',zh:'再一次',tag:'日常',ex:'もう一度言ってください。（請再說一次。）'},
     {jp:'ゆっくり',reading:'yukkuri',zh:'慢慢地',tag:'日常',ex:'ゆっくり話してください。（請慢慢說。）'},
-    {jp:'初めて',reading:'hajimete',zh:'第一次',tag:'日常',ex:'初めて日本に来ました。（第一次來日本。）'},
     {jp:'最近',reading:'saikin',zh:'最近',tag:'時間',ex:'最近どうですか？（最近怎麼樣？）'},
+    {jp:'会う',reading:'au',zh:'見面',tag:'動詞',ex:'友達に会います。（和朋友見面。）'},
+    {jp:'待つ',reading:'matsu',zh:'等待',tag:'動詞',ex:'バスを待ちます。（等公車。）'},
+    {jp:'思う',reading:'omou',zh:'認為',tag:'動詞',ex:'そう思います。（我這樣認為。）'},
+    {jp:'高い',reading:'takai',zh:'高的',tag:'形容詞',ex:'このビルは高い。（這棟大樓很高。）'},
+    {jp:'安い',reading:'yasui',zh:'便宜的',tag:'形容詞',ex:'このお店は安い。（這家店很便宜。）'},
+    {jp:'速い',reading:'hayai',zh:'快的',tag:'形容詞',ex:'新幹線は速い。（新幹線很快。）'},
+    {jp:'遅い',reading:'osoi',zh:'慢的',tag:'形容詞',ex:'今日は遅く起きた。（今天起得很晚。）'},
+    {jp:'近く',reading:'chikaku',zh:'附近',tag:'場所',ex:'近くにコンビニがある。（附近有便利商店。）'},
+    {jp:'遠い',reading:'tooi',zh:'遠的',tag:'形容詞',ex:'駅は遠いですか？（車站遠嗎？）'},
+    {jp:'新しい',reading:'atarashii',zh:'新的',tag:'形容詞',ex:'新しい服を買いました。（買了新衣服。）'},
+    {jp:'古い',reading:'furui',zh:'舊的',tag:'形容詞',ex:'古いお寺があります。（有一座古廟。）'},
+    {jp:'多い',reading:'ooi',zh:'多的',tag:'形容詞',ex:'人が多いですね。（人很多呢。）'},
+    {jp:'少ない',reading:'sukunai',zh:'少的',tag:'形容詞',ex:'時間が少ない。（時間很少。）'},
+    {jp:'簡単',reading:'kantan',zh:'簡單的',tag:'形容詞',ex:'この問題は簡単です。（這道題很簡單。）'},
+    {jp:'使う',reading:'tsukau',zh:'使用',tag:'動詞',ex:'スマホを使います。（使用手機。）'},
+    {jp:'作る',reading:'tsukuru',zh:'製作',tag:'動詞',ex:'料理を作ります。（做料理。）'},
+    {jp:'開ける',reading:'akeru',zh:'打開',tag:'動詞',ex:'窓を開けます。（打開窗戶。）'},
+    {jp:'閉める',reading:'shimeru',zh:'關閉',tag:'動詞',ex:'ドアを閉めます。（關門。）'},
+    {jp:'知る',reading:'shiru',zh:'知道',tag:'動詞',ex:'この場所を知っていますか？（你知道這個地方嗎？）'},
+    {jp:'初めて',reading:'hajimete',zh:'第一次',tag:'日常',ex:'初めて日本に来ました。（第一次來日本。）'},
+    {jp:'部屋',reading:'heya',zh:'房間',tag:'場所',ex:'部屋を片付けます。（整理房間。）'},
+    {jp:'欲しい',reading:'hoshii',zh:'想要',tag:'形容詞',ex:'新しいパソコンが欲しい。（想要新電腦。）'},
+    {jp:'暇',reading:'hima',zh:'空閒',tag:'形容詞',ex:'今日は暇です。（今天很空閒。）'},
+    {jp:'つまらない',reading:'tsumaranai',zh:'無聊的',tag:'形容詞',ex:'授業がつまらない。（課很無聊。）'},
+    {jp:'汚い',reading:'kitanai',zh:'髒的',tag:'形容詞',ex:'部屋が汚い。（房間很髒。）'},
+    {jp:'誰',reading:'dare',zh:'誰',tag:'疑問',ex:'あの人は誰ですか？（那個人是誰？）'},
+    {jp:'なぜ',reading:'naze',zh:'為什麼',tag:'疑問',ex:'なぜ泣いているの？（為什麼在哭？）'},
+    {jp:'どうやって',reading:'douyatte',zh:'怎麼做',tag:'疑問',ex:'どうやって行きますか？（怎麼去？）'},
+    {jp:'入る',reading:'hairu',zh:'進入',tag:'動詞',ex:'部屋に入ります。（進入房間。）'},
+    {jp:'出る',reading:'deru',zh:'出去',tag:'動詞',ex:'家を出ます。（出門。）'},
   ],
   '飲食料理': [
-    {jp:'ご飯',reading:'gohan',zh:'飯／餐食',tag:'食物',ex:'ご飯を食べましょう。（我們來吃飯吧。）'},
-    {jp:'おいしい',reading:'oishii',zh:'好吃',tag:'形容詞',ex:'このラーメンはおいしい！（這碗拉麵很好吃！）'},
+    {jp:'ご飯',reading:'gohan',zh:'飯',tag:'食物',ex:'ご飯を食べましょう。（我們來吃飯吧。）'},
+    {jp:'おいしい',reading:'oishii',zh:'好吃',tag:'味道',ex:'このラーメンはおいしい！（這碗拉麵很好吃！）'},
     {jp:'水',reading:'mizu',zh:'水',tag:'飲料',ex:'水をください。（請給我水。）'},
     {jp:'お茶',reading:'ocha',zh:'茶',tag:'飲料',ex:'お茶を一杯飲みたい。（想喝一杯茶。）'},
     {jp:'肉',reading:'niku',zh:'肉',tag:'食材',ex:'肉が好きです。（我喜歡吃肉。）'},
@@ -967,45 +365,29 @@ const vocabDB = {
     {jp:'お酒',reading:'osake',zh:'酒',tag:'飲料',ex:'お酒を飲みますか？（你喝酒嗎？）'},
     {jp:'ビール',reading:'biiru',zh:'啤酒',tag:'飲料',ex:'ビールを一杯ください。（請給我一杯啤酒。）'},
     {jp:'コーヒー',reading:'koohii',zh:'咖啡',tag:'飲料',ex:'コーヒーを飲みます。（喝咖啡。）'},
-    {jp:'ジュース',reading:'juusu',zh:'果汁',tag:'飲料',ex:'オレンジジュースをください。（請給我柳橙汁。）'},
     {jp:'パン',reading:'pan',zh:'麵包',tag:'食物',ex:'朝にパンを食べます。（早上吃麵包。）'},
     {jp:'卵',reading:'tamago',zh:'雞蛋',tag:'食材',ex:'卵を二つ使います。（使用兩個雞蛋。）'},
     {jp:'牛乳',reading:'gyuunyuu',zh:'牛奶',tag:'飲料',ex:'毎朝牛乳を飲みます。（每天早上喝牛奶。）'},
     {jp:'塩',reading:'shio',zh:'鹽',tag:'調料',ex:'塩を少し入れます。（加一點鹽。）'},
     {jp:'醤油',reading:'shouyu',zh:'醬油',tag:'調料',ex:'醤油をかけます。（淋上醬油。）'},
     {jp:'砂糖',reading:'satou',zh:'砂糖',tag:'調料',ex:'砂糖を入れすぎた。（糖加太多了。）'},
-    {jp:'料理する',reading:'ryouri suru',zh:'做菜',tag:'動詞',ex:'今日は料理します。（今天做菜。）'},
-    {jp:'焼く',reading:'yaku',zh:'烤／煎',tag:'動詞',ex:'魚を焼きます。（烤魚。）'},
-    {jp:'茹でる',reading:'yuderu',zh:'水煮',tag:'動詞',ex:'パスタを茹でます。（煮義大利麵。）'},
-    {jp:'切る',reading:'kiru',zh:'切',tag:'動詞',ex:'野菜を切ります。（切蔬菜。）'},
-    {jp:'混ぜる',reading:'mazeru',zh:'攪拌',tag:'動詞',ex:'よく混ぜてください。（請充分攪拌。）'},
     {jp:'注文する',reading:'chuumon suru',zh:'點餐',tag:'動詞',ex:'注文してもいいですか？（可以點餐了嗎？）'},
     {jp:'メニュー',reading:'menyuu',zh:'菜單',tag:'餐廳',ex:'メニューを見せてください。（請給我看菜單。）'},
     {jp:'お会計',reading:'okaikei',zh:'結帳',tag:'餐廳',ex:'お会計をお願いします。（麻煩結帳。）'},
-    {jp:'おかわり',reading:'okawari',zh:'再來一碗',tag:'餐廳',ex:'ご飯のおかわりをください。（請再給我一碗飯。）'},
     {jp:'満腹',reading:'manpuku',zh:'吃飽了',tag:'感受',ex:'満腹になりました。（我吃飽了。）'},
-    {jp:'空腹',reading:'kuufuku',zh:'肚子餓',tag:'感受',ex:'お腹が空いた。（肚子餓了。）'},
     {jp:'果物',reading:'kudamono',zh:'水果',tag:'食材',ex:'果物が好きです。（我喜歡水果。）'},
     {jp:'りんご',reading:'ringo',zh:'蘋果',tag:'水果',ex:'りんごを一つください。（給我一個蘋果。）'},
-    {jp:'バナナ',reading:'banana',zh:'香蕉',tag:'水果',ex:'バナナを毎日食べます。（每天吃香蕉。）'},
     {jp:'いちご',reading:'ichigo',zh:'草莓',tag:'水果',ex:'いちごが大好きです。（我非常喜歡草莓。）'},
-    {jp:'スーパー',reading:'suupaa',zh:'超市',tag:'場所',ex:'スーパーで買い物します。（在超市購物。）'},
     {jp:'コンビニ',reading:'konbini',zh:'便利商店',tag:'場所',ex:'コンビニで買いました。（在便利商店買的。）'},
     {jp:'弁当',reading:'bentou',zh:'便當',tag:'食物',ex:'お弁当を作りました。（做了便當。）'},
     {jp:'おにぎり',reading:'onigiri',zh:'飯糰',tag:'食物',ex:'コンビニのおにぎりが好き。（喜歡便利商店的飯糰。）'},
-    {jp:'麺',reading:'men',zh:'麵條',tag:'食物',ex:'麺類が好きです。（我喜歡麵類。）'},
-    {jp:'スープ',reading:'suupu',zh:'湯',tag:'食物',ex:'スープが熱い。（湯很燙。）'},
     {jp:'デザート',reading:'dezaato',zh:'甜點',tag:'食物',ex:'デザートはアイスです。（甜點是冰淇淋。）'},
-    {jp:'アイス',reading:'aisu',zh:'冰淇淋',tag:'食物',ex:'暑いのでアイスを食べます。（因為很熱所以吃冰淇淋。）'},
     {jp:'チョコレート',reading:'chokoreeto',zh:'巧克力',tag:'食物',ex:'チョコレートをもらった。（收到了巧克力。）'},
     {jp:'苦い',reading:'nigai',zh:'苦的',tag:'味道',ex:'コーヒーは苦いです。（咖啡很苦。）'},
     {jp:'酸っぱい',reading:'suppai',zh:'酸的',tag:'味道',ex:'レモンは酸っぱい。（檸檬很酸。）'},
     {jp:'しょっぱい',reading:'shoppai',zh:'鹹的',tag:'味道',ex:'この料理はしょっぱい。（這道菜很鹹。）'},
-    {jp:'温かい',reading:'atatakai',zh:'溫暖的',tag:'形容詞',ex:'温かいスープが飲みたい。（想喝熱湯。）'},
+    {jp:'温かい',reading:'atatakai',zh:'溫熱的',tag:'形容詞',ex:'温かいスープが飲みたい。（想喝熱湯。）'},
     {jp:'冷たい',reading:'tsumetai',zh:'冰涼的',tag:'形容詞',ex:'冷たいビールが飲みたい。（想喝冰啤酒。）'},
-    {jp:'新鮮',reading:'shinsen',zh:'新鮮的',tag:'形容詞',ex:'新鮮な野菜を買いました。（買了新鮮蔬菜。）'},
-    {jp:'食欲',reading:'shokuyoku',zh:'食慾',tag:'感受',ex:'今日は食欲がない。（今天沒有食慾。）'},
-    {jp:'レシピ',reading:'reshipi',zh:'食譜',tag:'料理',ex:'レシピを検索します。（搜尋食譜。）'},
     {jp:'食堂',reading:'shokudou',zh:'食堂',tag:'場所',ex:'学校の食堂で食べます。（在學校食堂吃。）'},
     {jp:'居酒屋',reading:'izakaya',zh:'居酒屋',tag:'場所',ex:'居酒屋で飲みましょう。（去居酒屋喝吧。）'},
     {jp:'定食',reading:'teishoku',zh:'套餐',tag:'料理',ex:'ランチ定食をください。（請給我午餐套餐。）'},
@@ -1014,45 +396,48 @@ const vocabDB = {
     {jp:'刺身',reading:'sashimi',zh:'生魚片',tag:'料理',ex:'刺身が新鮮です。（生魚片很新鮮。）'},
     {jp:'うどん',reading:'udon',zh:'烏龍麵',tag:'料理',ex:'うどんを食べます。（吃烏龍麵。）'},
     {jp:'そば',reading:'soba',zh:'蕎麥麵',tag:'料理',ex:'年越しそばを食べます。（吃跨年蕎麥麵。）'},
-    {jp:'餃子',reading:'gyouza',zh:'餃子',tag:'料理',ex:'餃子を作ります。（做餃子。）'},
     {jp:'カレー',reading:'karee',zh:'咖哩',tag:'料理',ex:'カレーライスが好き。（我喜歡咖哩飯。）'},
+    {jp:'焼く',reading:'yaku',zh:'烤',tag:'動詞',ex:'魚を焼きます。（烤魚。）'},
+    {jp:'茹でる',reading:'yuderu',zh:'水煮',tag:'動詞',ex:'パスタを茹でます。（煮義大利麵。）'},
+    {jp:'切る',reading:'kiru',zh:'切',tag:'動詞',ex:'野菜を切ります。（切蔬菜。）'},
+    {jp:'食べ放題',reading:'tabehoudai',zh:'吃到飽',tag:'餐廳',ex:'食べ放題に行きたい。（想去吃到飽。）'},
+    {jp:'持ち帰り',reading:'mochikaeri',zh:'外帶',tag:'餐廳',ex:'持ち帰りにします。（我要外帶。）'},
+    {jp:'ランチ',reading:'ranchi',zh:'午餐',tag:'餐食',ex:'ランチは何を食べますか？（午餐吃什麼？）'},
+    {jp:'ダイエット',reading:'daietto',zh:'節食',tag:'健康',ex:'ダイエット中です。（正在節食中。）'},
+    {jp:'箸',reading:'hashi',zh:'筷子',tag:'餐具',ex:'箸で食べます。（用筷子吃。）'},
+    {jp:'お皿',reading:'osara',zh:'盤子',tag:'餐具',ex:'お皿を洗います。（洗盤子。）'},
+    {jp:'冷蔵庫',reading:'reizouko',zh:'冰箱',tag:'廚房',ex:'冷蔵庫に入れます。（放進冰箱。）'},
+    {jp:'電子レンジ',reading:'denshi renji',zh:'微波爐',tag:'廚房',ex:'電子レンジで温めます。（用微波爐加熱。）'},
     {jp:'炒める',reading:'itameru',zh:'炒',tag:'動詞',ex:'野菜を炒めます。（炒蔬菜。）'},
     {jp:'揚げる',reading:'ageru',zh:'油炸',tag:'動詞',ex:'とんかつを揚げます。（炸豬排。）'},
     {jp:'煮る',reading:'niru',zh:'燉煮',tag:'動詞',ex:'スープを煮ます。（燉湯。）'},
-    {jp:'蒸す',reading:'musu',zh:'蒸',tag:'動詞',ex:'野菜を蒸します。（蒸蔬菜。）'},
-    {jp:'盛り付け',reading:'moritsuke',zh:'擺盤',tag:'料理',ex:'きれいに盛り付けます。（漂亮地擺盤。）'},
-    {jp:'食べ放題',reading:'tabehoudai',zh:'吃到飽',tag:'餐廳',ex:'食べ放題に行きたい。（想去吃到飽。）'},
-    {jp:'持ち帰り',reading:'mochikaeri',zh:'外帶',tag:'餐廳',ex:'持ち帰りにします。（我要外帶。）'},
+    {jp:'スープ',reading:'suupu',zh:'湯',tag:'食物',ex:'スープが熱い。（湯很燙。）'},
+    {jp:'アイス',reading:'aisu',zh:'冰淇淋',tag:'食物',ex:'暑いのでアイスを食べます。（因為很熱所以吃冰淇淋。）'},
+    {jp:'ジュース',reading:'juusu',zh:'果汁',tag:'飲料',ex:'オレンジジュースをください。（請給我柳橙汁。）'},
+    {jp:'バナナ',reading:'banana',zh:'香蕉',tag:'水果',ex:'バナナを毎日食べます。（每天吃香蕉。）'},
+    {jp:'料理する',reading:'ryouri suru',zh:'做菜',tag:'動詞',ex:'今日は料理します。（今天做菜。）'},
+    {jp:'混ぜる',reading:'mazeru',zh:'攪拌',tag:'動詞',ex:'よく混ぜてください。（請充分攪拌。）'},
+    {jp:'新鮮',reading:'shinsen',zh:'新鮮的',tag:'形容詞',ex:'新鮮な野菜を買いました。（買了新鮮蔬菜。）'},
+    {jp:'食欲',reading:'shokuyoku',zh:'食慾',tag:'感受',ex:'今日は食欲がない。（今天沒有食慾。）'},
+    {jp:'空腹',reading:'kuufuku',zh:'肚子餓',tag:'感受',ex:'お腹が空いた。（肚子餓了。）'},
     {jp:'予約',reading:'yoyaku',zh:'預訂',tag:'餐廳',ex:'レストランを予約します。（預訂餐廳。）'},
-    {jp:'ランチ',reading:'ranchi',zh:'午餐',tag:'餐食',ex:'ランチは何を食べますか？（午餐吃什麼？）'},
-    {jp:'ディナー',reading:'diinaa',zh:'晚餐',tag:'餐食',ex:'ディナーに行きましょう。（去吃晚餐吧。）'},
-    {jp:'朝食',reading:'choushoku',zh:'早餐',tag:'餐食',ex:'朝食を食べましたか？（你吃早餐了嗎？）'},
-    {jp:'間食',reading:'kanshoku',zh:'點心／零食',tag:'餐食',ex:'間食はやめます。（我要戒掉吃零食。）'},
-    {jp:'ダイエット',reading:'daietto',zh:'節食',tag:'健康',ex:'ダイエット中です。（正在節食中。）'},
-    {jp:'カロリー',reading:'karorii',zh:'卡路里',tag:'健康',ex:'カロリーが高い。（卡路里很高。）'},
-    {jp:'アレルギー',reading:'arerugii',zh:'過敏',tag:'健康',ex:'卵アレルギーがあります。（我對蛋過敏。）'},
-    {jp:'辛口',reading:'karakuchi',zh:'辣味',tag:'味道',ex:'辛口のカレーをください。（請給我辣的咖哩。）'},
-    {jp:'甘口',reading:'amakuchi',zh:'甜味',tag:'味道',ex:'甘口でお願いします。（請給我甜的。）'},
-    {jp:'ほろ苦い',reading:'horonigai',zh:'微苦',tag:'味道',ex:'ほろ苦いチョコが好き。（喜歡微苦的巧克力。）'},
     {jp:'さっぱり',reading:'sappari',zh:'清爽',tag:'味道',ex:'さっぱりした味が好きです。（喜歡清爽的口味。）'},
     {jp:'こってり',reading:'kotteri',zh:'濃郁',tag:'味道',ex:'こってりラーメンが好き。（喜歡濃郁的拉麵。）'},
-    {jp:'箸',reading:'hashi',zh:'筷子',tag:'餐具',ex:'箸で食べます。（用筷子吃。）'},
-    {jp:'フォーク',reading:'fooku',zh:'叉子',tag:'餐具',ex:'フォークを使います。（使用叉子。）'},
-    {jp:'スプーン',reading:'supuun',zh:'湯匙',tag:'餐具',ex:'スプーンでスープを飲む。（用湯匙喝湯。）'},
-    {jp:'お皿',reading:'osara',zh:'盤子',tag:'餐具',ex:'お皿を洗います。（洗盤子。）'},
-    {jp:'コップ',reading:'koppu',zh:'杯子',tag:'餐具',ex:'コップに水を入れます。（在杯子裡倒水。）'},
-    {jp:'冷蔵庫',reading:'reizouko',zh:'冰箱',tag:'廚房',ex:'冷蔵庫に入れます。（放進冰箱。）'},
-    {jp:'電子レンジ',reading:'denshi renji',zh:'微波爐',tag:'廚房',ex:'電子レンジで温めます。（用微波爐加熱。）'},
-    {jp:'フライパン',reading:'furaipan',zh:'平底鍋',tag:'廚房',ex:'フライパンで炒めます。（用平底鍋炒。）'},
+    {jp:'おかわり',reading:'okawari',zh:'再來一碗',tag:'餐廳',ex:'ご飯のおかわりをください。（請再給我一碗飯。）'},
     {jp:'旬',reading:'shun',zh:'當季',tag:'食材',ex:'旬の野菜を使います。（使用當季蔬菜。）'},
-    {jp:'産地',reading:'sanchhi',zh:'產地',tag:'食材',ex:'産地はどこですか？（產地在哪裡？）'},
+    {jp:'蒸す',reading:'musu',zh:'蒸',tag:'動詞',ex:'野菜を蒸します。（蒸蔬菜。）'},
+    {jp:'餃子',reading:'gyouza',zh:'餃子',tag:'料理',ex:'餃子を作ります。（做餃子。）'},
+    {jp:'ディナー',reading:'diinaa',zh:'晚餐',tag:'餐食',ex:'ディナーに行きましょう。（去吃晚餐吧。）'},
+    {jp:'朝食',reading:'choushoku',zh:'早餐',tag:'餐食',ex:'朝食を食べましたか？（你吃早餐了嗎？）'},
+    {jp:'スーパー',reading:'suupaa',zh:'超市',tag:'場所',ex:'スーパーで買い物します。（在超市購物。）'},
+    {jp:'レシピ',reading:'reshipi',zh:'食譜',tag:'料理',ex:'レシピを検索します。（搜尋食譜。）'},
   ],
   '旅遊交通': [
     {jp:'電車',reading:'densha',zh:'電車',tag:'交通',ex:'電車で行きます。（搭電車去。）'},
     {jp:'バス',reading:'basu',zh:'公車',tag:'交通',ex:'バスに乗ってください。（請搭公車。）'},
     {jp:'駅',reading:'eki',zh:'車站',tag:'場所',ex:'駅はどこですか？（車站在哪裡？）'},
     {jp:'切符',reading:'kippu',zh:'票',tag:'交通',ex:'切符を買います。（買票。）'},
-    {jp:'ホテル',reading:'hoteru',zh:'飯店',tag:'場所',ex:'ホテルを予約しました。（預訂了飯店。）'},
+    {jp:'ホテル',reading:'hoteru',zh:'飯店',tag:'住宿',ex:'ホテルを予約しました。（預訂了飯店。）'},
     {jp:'空港',reading:'kuukou',zh:'機場',tag:'場所',ex:'空港までタクシーで行く。（搭計程車去機場。）'},
     {jp:'地図',reading:'chizu',zh:'地圖',tag:'工具',ex:'地図を見てください。（請看地圖。）'},
     {jp:'観光',reading:'kankou',zh:'觀光',tag:'旅遊',ex:'東京を観光します。（在東京觀光。）'},
@@ -1062,132 +447,113 @@ const vocabDB = {
     {jp:'新幹線',reading:'shinkansen',zh:'新幹線',tag:'交通',ex:'新幹線に乗りたい。（想搭新幹線。）'},
     {jp:'タクシー',reading:'takushii',zh:'計程車',tag:'交通',ex:'タクシーを呼びます。（叫計程車。）'},
     {jp:'自転車',reading:'jitensha',zh:'腳踏車',tag:'交通',ex:'自転車で通勤します。（騎腳踏車通勤。）'},
-    {jp:'バイク',reading:'baiku',zh:'摩托車',tag:'交通',ex:'バイクで旅をします。（騎摩托車旅行。）'},
     {jp:'乗り換え',reading:'norikae',zh:'換車',tag:'交通',ex:'渋谷で乗り換えます。（在澀谷換車。）'},
-    {jp:'終電',reading:'shuuden',zh:'末班車',tag:'交通',ex:'終電に間に合った。（趕上末班車了。）'},
-    {jp:'定期券',reading:'teikiken',zh:'月票',tag:'交通',ex:'定期券を買いました。（買了月票。）'},
     {jp:'パスポート',reading:'pasupooto',zh:'護照',tag:'旅遊',ex:'パスポートを忘れた！（忘記帶護照了！）'},
-    {jp:'入国',reading:'nyuukoku',zh:'入境',tag:'旅遊',ex:'入国審査があります。（有入境審查。）'},
     {jp:'両替',reading:'ryougae',zh:'換錢',tag:'旅遊',ex:'どこで両替できますか？（哪裡可以換錢？）'},
-    {jp:'観光地',reading:'kankouchhi',zh:'觀光地',tag:'旅遊',ex:'有名な観光地を訪れます。（參觀著名觀光地。）'},
     {jp:'神社',reading:'jinja',zh:'神社',tag:'景點',ex:'神社にお参りします。（去神社參拜。）'},
     {jp:'お寺',reading:'otera',zh:'寺廟',tag:'景點',ex:'お寺で写真を撮りました。（在寺廟拍了照片。）'},
     {jp:'博物館',reading:'hakubutsukan',zh:'博物館',tag:'景點',ex:'博物館を見学します。（參觀博物館。）'},
-    {jp:'美術館',reading:'bijutsukan',zh:'美術館',tag:'景點',ex:'美術館に行きたい。（想去美術館。）'},
     {jp:'公園',reading:'kouen',zh:'公園',tag:'景點',ex:'公園を散歩します。（在公園散步。）'},
-    {jp:'海岸',reading:'kaigan',zh:'海岸',tag:'景點',ex:'海岸で夕日を見ます。（在海岸看夕陽。）'},
-    {jp:'山登り',reading:'yamanobori',zh:'爬山',tag:'活動',ex:'山登りが好きです。（我喜歡爬山。）'},
     {jp:'温泉',reading:'onsen',zh:'溫泉',tag:'活動',ex:'温泉に入りたい。（想泡溫泉。）'},
     {jp:'チェックイン',reading:'chekkuin',zh:'入住',tag:'飯店',ex:'チェックインをお願いします。（麻煩辦理入住。）'},
     {jp:'チェックアウト',reading:'chekkuauto',zh:'退房',tag:'飯店',ex:'チェックアウトは何時ですか？（退房時間是幾點？）'},
-    {jp:'フロント',reading:'furonto',zh:'櫃台',tag:'飯店',ex:'フロントに電話します。（打電話給櫃台。）'},
     {jp:'荷物',reading:'nimotsu',zh:'行李',tag:'旅遊',ex:'荷物を預けます。（寄存行李。）'},
     {jp:'迷子',reading:'maigo',zh:'迷路',tag:'旅遊',ex:'迷子になりました。（我迷路了。）'},
     {jp:'地下鉄',reading:'chikatetsu',zh:'地鐵',tag:'交通',ex:'地下鉄で渋谷に行きます。（搭地鐵去澀谷。）'},
-    {jp:'時刻表',reading:'jikokuhyou',zh:'時刻表',tag:'交通',ex:'時刻表を確認します。（確認時刻表。）'},
-    {jp:'遅延',reading:'chien',zh:'誤點',tag:'交通',ex:'電車が遅延しています。（電車誤點了。）'},
-    {jp:'特急',reading:'tokkyuu',zh:'特急列車',tag:'交通',ex:'特急に乗ります。（搭特急列車。）'},
-    {jp:'自由席',reading:'jiyuuseki',zh:'自由座',tag:'交通',ex:'自由席に座ります。（坐自由座。）'},
-    {jp:'指定席',reading:'shiteiseki',zh:'對號座',tag:'交通',ex:'指定席を予約しました。（預訂了對號座。）'},
     {jp:'旅行',reading:'ryokou',zh:'旅行',tag:'旅遊',ex:'旅行が大好きです。（我非常喜歡旅行。）'},
     {jp:'旅館',reading:'ryokan',zh:'日式旅館',tag:'住宿',ex:'旅館に泊まりたい。（想住日式旅館。）'},
-    {jp:'民宿',reading:'minshuku',zh:'民宿',tag:'住宿',ex:'民宿に泊まります。（住民宿。）'},
-    {jp:'ツアー',reading:'tsuaa',zh:'旅遊團',tag:'旅遊',ex:'ツアーに参加します。（參加旅遊團。）'},
     {jp:'ガイド',reading:'gaido',zh:'導遊',tag:'旅遊',ex:'ガイドさんに案内してもらう。（請導遊帶路。）'},
-    {jp:'観光バス',reading:'kankoubbasu',zh:'觀光巴士',tag:'交通',ex:'観光バスに乗ります。（搭觀光巴士。）'},
     {jp:'レンタカー',reading:'rentakaa',zh:'租車',tag:'交通',ex:'レンタカーを借ります。（租車。）'},
-    {jp:'道',reading:'michi',zh:'路',tag:'場所',ex:'この道で合っていますか？（這條路對嗎？）'},
     {jp:'交差点',reading:'kousaten',zh:'十字路口',tag:'場所',ex:'交差点を左に曲がります。（在十字路口左轉。）'},
-    {jp:'橋',reading:'hashi',zh:'橋',tag:'場所',ex:'橋を渡ります。（過橋。）'},
-    {jp:'港',reading:'minato',zh:'港口',tag:'場所',ex:'港からフェリーに乗ります。（從港口搭渡輪。）'},
     {jp:'案内所',reading:'annaisho',zh:'詢問處',tag:'場所',ex:'案内所で聞きます。（在詢問處問問看。）'},
     {jp:'トイレ',reading:'toire',zh:'廁所',tag:'場所',ex:'トイレはどこですか？（廁所在哪裡？）'},
     {jp:'入場料',reading:'nyuujouryou',zh:'入場費',tag:'旅遊',ex:'入場料はいくらですか？（入場費多少錢？）'},
-    {jp:'開館時間',reading:'kaikan jikan',zh:'開館時間',tag:'旅遊',ex:'開館時間を教えてください。（請告訴我開館時間。）'},
-    {jp:'休館日',reading:'kyuukan bi',zh:'休館日',tag:'旅遊',ex:'今日は休館日です。（今天是休館日。）'},
     {jp:'景色',reading:'keshiki',zh:'景色',tag:'旅遊',ex:'景色がきれいですね。（景色真美呢。）'},
-    {jp:'混んでいる',reading:'konde iru',zh:'很擁擠',tag:'狀況',ex:'電車が混んでいます。（電車很擠。）'},
-    {jp:'空いている',reading:'aite iru',zh:'空著',tag:'狀況',ex:'この席は空いていますか？（這個座位有空嗎？）'},
-    {jp:'直行',reading:'chokkou',zh:'直達',tag:'交通',ex:'直行便で行きます。（搭直達班機去。）'},
-    {jp:'乗り場',reading:'noriba',zh:'乘車處',tag:'交通',ex:'バスの乗り場はどこ？（公車乘車處在哪？）'},
     {jp:'降りる',reading:'oriru',zh:'下車',tag:'動詞',ex:'次の駅で降ります。（在下一站下車。）'},
     {jp:'乗る',reading:'noru',zh:'搭乘',tag:'動詞',ex:'電車に乗ります。（搭電車。）'},
     {jp:'着く',reading:'tsuku',zh:'抵達',tag:'動詞',ex:'もうすぐ着きます。（快到了。）'},
     {jp:'出発する',reading:'shuppatsu suru',zh:'出發',tag:'動詞',ex:'九時に出発します。（九點出發。）'},
-    {jp:'到着する',reading:'touchaku suru',zh:'抵達',tag:'動詞',ex:'無事に到着しました。（平安抵達了。）'},
-    {jp:'迂回する',reading:'ukai suru',zh:'繞道',tag:'動詞',ex:'工事中なので迂回します。（因為施工所以繞道。）'},
     {jp:'急ぐ',reading:'isogu',zh:'趕快',tag:'動詞',ex:'急いでください！（請快點！）'},
-    {jp:'散策',reading:'sansaku',zh:'散步',tag:'活動',ex:'町を散策します。（在城鎮散步。）'},
     {jp:'宿泊',reading:'shukuhaku',zh:'住宿',tag:'旅遊',ex:'二泊三日の旅です。（兩泊三日的旅程。）'},
-    {jp:'予算',reading:'yosan',zh:'預算',tag:'旅遊',ex:'旅行の予算は？（旅行預算是多少？）'},
     {jp:'日程',reading:'nittei',zh:'行程',tag:'旅遊',ex:'日程を決めましょう。（來決定行程吧。）'},
-    {jp:'土産物屋',reading:'miyagemodokoya',zh:'伴手禮店',tag:'場所',ex:'土産物屋に寄ります。（順便去伴手禮店。）'},
     {jp:'祭り',reading:'matsuri',zh:'祭典',tag:'活動',ex:'夏祭りを見に行きます。（去看夏日祭典。）'},
     {jp:'花火',reading:'hanabi',zh:'煙火',tag:'活動',ex:'花火大会に行きたい。（想去煙火大會。）'},
     {jp:'紅葉',reading:'kouyou',zh:'楓葉',tag:'景觀',ex:'紅葉を見に行きます。（去看楓葉。）'},
     {jp:'桜',reading:'sakura',zh:'櫻花',tag:'景觀',ex:'桜の季節に旅行したい。（想在櫻花季節旅行。）'},
-    {jp:'富士山',reading:'fujisan',zh:'富士山',tag:'景點',ex:'富士山を見たい。（想看富士山。）'},
     {jp:'免税',reading:'menzei',zh:'免稅',tag:'購物',ex:'免税で買えますか？（可以免稅購買嗎？）'},
+    {jp:'時刻表',reading:'jikokuhyou',zh:'時刻表',tag:'交通',ex:'時刻表を確認します。（確認時刻表。）'},
+    {jp:'遅延',reading:'chien',zh:'誤點',tag:'交通',ex:'電車が遅延しています。（電車誤點了。）'},
+    {jp:'定期券',reading:'teikiken',zh:'月票',tag:'交通',ex:'定期券を買いました。（買了月票。）'},
+    {jp:'終電',reading:'shuuden',zh:'末班車',tag:'交通',ex:'終電に間に合った。（趕上末班車了。）'},
+    {jp:'自由席',reading:'jiyuuseki',zh:'自由座',tag:'交通',ex:'自由席に座ります。（坐自由座。）'},
+    {jp:'指定席',reading:'shiteiseki',zh:'對號座',tag:'交通',ex:'指定席を予約しました。（預訂了對號座。）'},
+    {jp:'観光地',reading:'kankouchhi',zh:'觀光地',tag:'旅遊',ex:'有名な観光地を訪れます。（參觀著名觀光地。）'},
+    {jp:'美術館',reading:'bijutsukan',zh:'美術館',tag:'景點',ex:'美術館に行きたい。（想去美術館。）'},
+    {jp:'海岸',reading:'kaigan',zh:'海岸',tag:'景點',ex:'海岸で夕日を見ます。（在海岸看夕陽。）'},
+    {jp:'山登り',reading:'yamanobori',zh:'爬山',tag:'活動',ex:'山登りが好きです。（我喜歡爬山。）'},
+    {jp:'ツアー',reading:'tsuaa',zh:'旅遊團',tag:'旅遊',ex:'ツアーに参加します。（參加旅遊團。）'},
+    {jp:'港',reading:'minato',zh:'港口',tag:'場所',ex:'港からフェリーに乗ります。（從港口搭渡輪。）'},
+    {jp:'橋',reading:'hashi',zh:'橋',tag:'場所',ex:'橋を渡ります。（過橋。）'},
+    {jp:'道',reading:'michi',zh:'路',tag:'場所',ex:'この道で合っていますか？（這條路對嗎？）'},
+    {jp:'散策',reading:'sansaku',zh:'散步',tag:'活動',ex:'町を散策します。（在城鎮散步。）'},
+    {jp:'混んでいる',reading:'konde iru',zh:'很擁擠',tag:'狀況',ex:'電車が混んでいます。（電車很擠。）'},
+    {jp:'富士山',reading:'fujisan',zh:'富士山',tag:'景點',ex:'富士山を見たい。（想看富士山。）'},
+    {jp:'土産物屋',reading:'miyagemono ya',zh:'伴手禮店',tag:'場所',ex:'土産物屋に寄ります。（順便去伴手禮店。）'},
+    {jp:'予算',reading:'yosan',zh:'預算',tag:'旅遊',ex:'旅行の予算は？（旅行預算是多少？）'},
+    {jp:'入国',reading:'nyuukoku',zh:'入境',tag:'旅遊',ex:'入国審査があります。（有入境審查。）'},
+    {jp:'民宿',reading:'minshuku',zh:'民宿',tag:'住宿',ex:'民宿に泊まります。（住民宿。）'},
   ],
   '動物自然': [
     {jp:'犬',reading:'inu',zh:'狗',tag:'動物',ex:'犬が大好きです。（我非常喜歡狗。）'},
     {jp:'猫',reading:'neko',zh:'貓',tag:'動物',ex:'猫はかわいいですね。（貓很可愛呢。）'},
     {jp:'鳥',reading:'tori',zh:'鳥',tag:'動物',ex:'鳥が空を飛んでいる。（鳥在天空飛翔。）'},
-    {jp:'花',reading:'hana',zh:'花',tag:'自然',ex:'桜の花がきれいです。（櫻花很漂亮。）'},
-    {jp:'木',reading:'ki',zh:'樹',tag:'自然',ex:'大きい木がある。（有一棵大樹。）'},
-    {jp:'山',reading:'yama',zh:'山',tag:'自然',ex:'山に登りたい。（想爬山。）'},
-    {jp:'海',reading:'umi',zh:'海',tag:'自然',ex:'海で泳ぎます。（在海裡游泳。）'},
+    {jp:'花',reading:'hana',zh:'花',tag:'植物',ex:'桜の花がきれいです。（櫻花很漂亮。）'},
+    {jp:'木',reading:'ki',zh:'樹',tag:'植物',ex:'大きい木がある。（有一棵大樹。）'},
+    {jp:'山',reading:'yama',zh:'山',tag:'地理',ex:'山に登りたい。（想爬山。）'},
+    {jp:'海',reading:'umi',zh:'海',tag:'地理',ex:'海で泳ぎます。（在海裡游泳。）'},
     {jp:'空',reading:'sora',zh:'天空',tag:'自然',ex:'空が青いです。（天空很藍。）'},
     {jp:'雨',reading:'ame',zh:'雨',tag:'天氣',ex:'雨が降っています。（正在下雨。）'},
     {jp:'雪',reading:'yuki',zh:'雪',tag:'天氣',ex:'雪が降った。（下雪了。）'},
     {jp:'馬',reading:'uma',zh:'馬',tag:'動物',ex:'馬に乗ります。（騎馬。）'},
     {jp:'牛',reading:'ushi',zh:'牛',tag:'動物',ex:'牛がのんびりしている。（牛悠閒地待著。）'},
-    {jp:'豚',reading:'buta',zh:'豬',tag:'動物',ex:'豚はかわいいと思う。（我覺得豬很可愛。）'},
-    {jp:'羊',reading:'hitsuji',zh:'羊',tag:'動物',ex:'羊の毛は柔らかい。（羊毛很柔軟。）'},
     {jp:'うさぎ',reading:'usagi',zh:'兔子',tag:'動物',ex:'うさぎが草を食べている。（兔子在吃草。）'},
     {jp:'くま',reading:'kuma',zh:'熊',tag:'動物',ex:'くまは冬に冬眠します。（熊在冬天冬眠。）'},
-    {jp:'きつね',reading:'kitsune',zh:'狐狸',tag:'動物',ex:'きつねは賢い動物です。（狐狸是聰明的動物。）'},
-    {jp:'たぬき',reading:'tanuki',zh:'貍',tag:'動物',ex:'たぬきは日本の動物です。（貍是日本的動物。）'},
     {jp:'鹿',reading:'shika',zh:'鹿',tag:'動物',ex:'奈良には鹿がたくさんいる。（奈良有很多鹿。）'},
     {jp:'猿',reading:'saru',zh:'猴子',tag:'動物',ex:'猿が木に登っている。（猴子在爬樹。）'},
     {jp:'象',reading:'zou',zh:'大象',tag:'動物',ex:'象は鼻が長い。（大象的鼻子很長。）'},
-    {jp:'ライオン',reading:'raion',zh:'獅子',tag:'動物',ex:'ライオンは百獣の王です。（獅子是萬獸之王。）'},
-    {jp:'虎',reading:'tora',zh:'老虎',tag:'動物',ex:'虎は強い動物です。（老虎是強壯的動物。）'},
-    {jp:'クジラ',reading:'kujira',zh:'鯨魚',tag:'動物',ex:'クジラを見たことがある。（我曾經見過鯨魚。）'},
     {jp:'イルカ',reading:'iruka',zh:'海豚',tag:'動物',ex:'イルカは賢いです。（海豚很聰明。）'},
     {jp:'金魚',reading:'kingyo',zh:'金魚',tag:'動物',ex:'金魚を飼っています。（養著金魚。）'},
     {jp:'蝶',reading:'chou',zh:'蝴蝶',tag:'昆蟲',ex:'きれいな蝶が飛んでいる。（漂亮的蝴蝶在飛。）'},
-    {jp:'蜂',reading:'hachi',zh:'蜜蜂',tag:'昆蟲',ex:'蜂に刺されました。（被蜜蜂叮了。）'},
     {jp:'カエル',reading:'kaeru',zh:'青蛙',tag:'動物',ex:'雨の日はカエルが鳴く。（下雨天青蛙叫。）'},
-    {jp:'蛇',reading:'hebi',zh:'蛇',tag:'動物',ex:'蛇が怖いです。（我怕蛇。）'},
-    {jp:'川',reading:'kawa',zh:'河川',tag:'自然',ex:'川で魚を釣ります。（在河裡釣魚。）'},
-    {jp:'池',reading:'ike',zh:'池塘',tag:'自然',ex:'池に鯉がいる。（池塘裡有鯉魚。）'},
-    {jp:'森',reading:'mori',zh:'森林',tag:'自然',ex:'森の中を歩きます。（在森林裡走路。）'},
-    {jp:'草原',reading:'sougen',zh:'草原',tag:'自然',ex:'草原で馬が走っている。（馬在草原上奔跑。）'},
-    {jp:'砂漠',reading:'sabaku',zh:'沙漠',tag:'自然',ex:'砂漠は暑い。（沙漠很熱。）'},
-    {jp:'火山',reading:'kazan',zh:'火山',tag:'自然',ex:'富士山は火山です。（富士山是火山。）'},
+    {jp:'川',reading:'kawa',zh:'河川',tag:'地理',ex:'川で魚を釣ります。（在河裡釣魚。）'},
+    {jp:'森',reading:'mori',zh:'森林',tag:'地理',ex:'森の中を歩きます。（在森林裡走路。）'},
+    {jp:'火山',reading:'kazan',zh:'火山',tag:'地理',ex:'富士山は火山です。（富士山是火山。）'},
     {jp:'地震',reading:'jishin',zh:'地震',tag:'自然',ex:'地震が来た！（地震來了！）'},
     {jp:'台風',reading:'taifuu',zh:'颱風',tag:'天氣',ex:'台風が近づいている。（颱風正在接近。）'},
     {jp:'虹',reading:'niji',zh:'彩虹',tag:'天氣',ex:'雨上がりに虹が出た。（雨後出現了彩虹。）'},
     {jp:'雷',reading:'kaminari',zh:'打雷',tag:'天氣',ex:'雷が怖いです。（我怕打雷。）'},
-    {jp:'霧',reading:'kiri',zh:'霧',tag:'天氣',ex:'今朝は霧が出ています。（今天早上起霧了。）'},
     {jp:'風',reading:'kaze',zh:'風',tag:'天氣',ex:'強い風が吹いている。（吹著強風。）'},
-    {jp:'日光',reading:'nikkou',zh:'陽光',tag:'天氣',ex:'日光が眩しい。（陽光很刺眼。）'},
+    {jp:'太陽',reading:'taiyou',zh:'太陽',tag:'天體',ex:'太陽が昇ります。（太陽升起。）'},
     {jp:'月',reading:'tsuki',zh:'月亮',tag:'天體',ex:'月が綺麗ですね。（月亮好美呢。）'},
     {jp:'星',reading:'hoshi',zh:'星星',tag:'天體',ex:'夜空に星が輝いている。（星星在夜空閃耀。）'},
-    {jp:'太陽',reading:'taiyou',zh:'太陽',tag:'天體',ex:'太陽が昇ります。（太陽升起。）'},
-    {jp:'植物',reading:'shokubutsu',zh:'植物',tag:'自然',ex:'植物が育っています。（植物在成長。）'},
     {jp:'葉',reading:'ha',zh:'葉子',tag:'植物',ex:'葉が緑色です。（葉子是綠色的。）'},
-    {jp:'根',reading:'ne',zh:'根',tag:'植物',ex:'木の根が張っている。（樹根延伸著。）'},
-    {jp:'種',reading:'tane',zh:'種子',tag:'植物',ex:'種を植えます。（種下種子。）'},
     {jp:'竹',reading:'take',zh:'竹子',tag:'植物',ex:'竹は成長が早い。（竹子生長很快。）'},
-    {jp:'松',reading:'matsu',zh:'松樹',tag:'植物',ex:'松の木がある。（有一棵松樹。）'},
     {jp:'桜',reading:'sakura',zh:'櫻花樹',tag:'植物',ex:'桜が満開です。（櫻花盛開了。）'},
-    {jp:'生態系',reading:'seitaikei',zh:'生態系',tag:'自然',ex:'生態系を守ります。（保護生態系。）'},
-    {jp:'絶滅危惧種',reading:'zetsumetsu kigushu',zh:'瀕臨絕種',tag:'自然',ex:'絶滅危惧種を守りたい。（想保護瀕臨絕種的物種。）'},
-    {jp:'野生',reading:'yasei',zh:'野生',tag:'動物',ex:'野生の動物に近づかない。（不要靠近野生動物。）'},
+    {jp:'春',reading:'haru',zh:'春天',tag:'季節',ex:'春は桜が咲きます。（春天櫻花盛開。）'},
+    {jp:'夏',reading:'natsu',zh:'夏天',tag:'季節',ex:'夏は海に行きます。（夏天去海邊。）'},
+    {jp:'秋',reading:'aki',zh:'秋天',tag:'季節',ex:'秋は紅葉がきれい。（秋天楓葉很美。）'},
+    {jp:'冬',reading:'fuyu',zh:'冬天',tag:'季節',ex:'冬はスキーをします。（冬天滑雪。）'},
+    {jp:'波',reading:'nami',zh:'海浪',tag:'自然',ex:'波が高いです。（海浪很大。）'},
+    {jp:'島',reading:'shima',zh:'島嶼',tag:'地理',ex:'島に行きたい。（想去島嶼。）'},
+    {jp:'湖',reading:'mizuumi',zh:'湖',tag:'地理',ex:'湖のほとりを歩く。（在湖邊散步。）'},
+    {jp:'滝',reading:'taki',zh:'瀑布',tag:'自然',ex:'大きな滝がある。（有一個大瀑布。）'},
+    {jp:'土',reading:'tsuchi',zh:'土壤',tag:'自然',ex:'土に種を植えます。（在土裡種下種子。）'},
+    {jp:'砂',reading:'suna',zh:'沙',tag:'自然',ex:'砂浜を歩きます。（在沙灘上走路。）'},
+    {jp:'日光',reading:'nikkou',zh:'陽光',tag:'天氣',ex:'日光が眩しい。（陽光很刺眼。）'},
+    {jp:'霧',reading:'kiri',zh:'霧',tag:'天氣',ex:'今朝は霧が出ています。（今天早上起霧了。）'},
+    {jp:'池',reading:'ike',zh:'池塘',tag:'地理',ex:'池に鯉がいる。（池塘裡有鯉魚。）'},
+    {jp:'草原',reading:'sougen',zh:'草原',tag:'地理',ex:'草原で馬が走っている。（馬在草原上奔跑。）'},
     {jp:'飼う',reading:'kau',zh:'飼養',tag:'動詞',ex:'猫を飼っています。（養著貓。）'},
-    {jp:'吠える',reading:'hoeru',zh:'吠叫',tag:'動詞',ex:'犬が吠えています。（狗在叫。）'},
     {jp:'泳ぐ',reading:'oyogu',zh:'游泳',tag:'動詞',ex:'魚が泳いでいる。（魚在游泳。）'},
     {jp:'飛ぶ',reading:'tobu',zh:'飛',tag:'動詞',ex:'鳥が飛んでいる。（鳥在飛。）'},
     {jp:'走る',reading:'hashiru',zh:'跑',tag:'動詞',ex:'馬が走っている。（馬在奔跑。）'},
@@ -1195,22 +561,24 @@ const vocabDB = {
     {jp:'環境',reading:'kankyou',zh:'環境',tag:'自然',ex:'環境を大切にします。（珍惜環境。）'},
     {jp:'気候',reading:'kikou',zh:'氣候',tag:'自然',ex:'気候変動が問題です。（氣候變遷是個問題。）'},
     {jp:'季節',reading:'kisetsu',zh:'季節',tag:'自然',ex:'日本は四季があります。（日本有四季。）'},
-    {jp:'春',reading:'haru',zh:'春天',tag:'季節',ex:'春は桜が咲きます。（春天櫻花盛開。）'},
-    {jp:'夏',reading:'natsu',zh:'夏天',tag:'季節',ex:'夏は海に行きます。（夏天去海邊。）'},
-    {jp:'秋',reading:'aki',zh:'秋天',tag:'季節',ex:'秋は紅葉がきれい。（秋天楓葉很美。）'},
-    {jp:'冬',reading:'fuyu',zh:'冬天',tag:'季節',ex:'冬はスキーをします。（冬天滑雪。）'},
-    {jp:'土',reading:'tsuchi',zh:'土壤',tag:'自然',ex:'土に種を植えます。（在土裡種下種子。）'},
+    {jp:'種',reading:'tane',zh:'種子',tag:'植物',ex:'種を植えます。（種下種子。）'},
+    {jp:'根',reading:'ne',zh:'根',tag:'植物',ex:'木の根が張っている。（樹根延伸著。）'},
     {jp:'岩',reading:'iwa',zh:'岩石',tag:'自然',ex:'大きな岩があります。（有一塊大岩石。）'},
-    {jp:'砂',reading:'suna',zh:'沙',tag:'自然',ex:'砂浜を歩きます。（在沙灘上走路。）'},
-    {jp:'波',reading:'nami',zh:'海浪',tag:'自然',ex:'波が高いです。（海浪很大。）'},
-    {jp:'島',reading:'shima',zh:'島嶼',tag:'地理',ex:'島に行きたい。（想去島嶼。）'},
-    {jp:'湖',reading:'mizuumi',zh:'湖',tag:'地理',ex:'湖のほとりを歩く。（在湖邊散步。）'},
-    {jp:'滝',reading:'taki',zh:'瀑布',tag:'自然',ex:'大きな滝がある。（有一個大瀑布。）'},
-    {jp:'谷',reading:'tani',zh:'山谷',tag:'地理',ex:'谷を流れる川。（流經山谷的河川。）'},
-    {jp:'平野',reading:'heiya',zh:'平原',tag:'地理',ex:'広い平野が広がっている。（廣闊的平原延伸著。）'},
-    {jp:'生き物',reading:'ikimono',zh:'生物',tag:'自然',ex:'たくさんの生き物がいる。（有許多生物。）'},
     {jp:'巣',reading:'su',zh:'巢穴',tag:'自然',ex:'鳥が巣を作っている。（鳥在築巢。）'},
     {jp:'冬眠',reading:'toumin',zh:'冬眠',tag:'動物',ex:'クマは冬眠します。（熊會冬眠。）'},
+    {jp:'野生',reading:'yasei',zh:'野生',tag:'動物',ex:'野生の動物に近づかない。（不要靠近野生動物。）'},
+    {jp:'生き物',reading:'ikimono',zh:'生物',tag:'自然',ex:'たくさんの生き物がいる。（有許多生物。）'},
+    {jp:'虎',reading:'tora',zh:'老虎',tag:'動物',ex:'虎は強い動物です。（老虎是強壯的動物。）'},
+    {jp:'ライオン',reading:'raion',zh:'獅子',tag:'動物',ex:'ライオンは百獣の王です。（獅子是萬獸之王。）'},
+    {jp:'クジラ',reading:'kujira',zh:'鯨魚',tag:'動物',ex:'クジラを見たことがある。（我曾經見過鯨魚。）'},
+    {jp:'きつね',reading:'kitsune',zh:'狐狸',tag:'動物',ex:'きつねは賢い動物です。（狐狸是聰明的動物。）'},
+    {jp:'羊',reading:'hitsuji',zh:'羊',tag:'動物',ex:'羊の毛は柔らかい。（羊毛很柔軟。）'},
+    {jp:'豚',reading:'buta',zh:'豬',tag:'動物',ex:'豚はかわいいと思う。（我覺得豬很可愛。）'},
+    {jp:'蜂',reading:'hachi',zh:'蜜蜂',tag:'昆蟲',ex:'蜂に刺されました。（被蜜蜂叮了。）'},
+    {jp:'蛇',reading:'hebi',zh:'蛇',tag:'動物',ex:'蛇が怖いです。（我怕蛇。）'},
+    {jp:'たぬき',reading:'tanuki',zh:'貍',tag:'動物',ex:'たぬきは日本の動物です。（貍是日本的動物。）'},
+    {jp:'松',reading:'matsu',zh:'松樹',tag:'植物',ex:'松の木がある。（有一棵松樹。）'},
+    {jp:'植物',reading:'shokubutsu',zh:'植物',tag:'自然',ex:'植物が育っています。（植物在成長。）'},
   ],
   '情緒感受': [
     {jp:'嬉しい',reading:'ureshii',zh:'高興的',tag:'情緒',ex:'合格して嬉しい！（通過了好高興！）'},
@@ -1224,7 +592,6 @@ const vocabDB = {
     {jp:'痛い',reading:'itai',zh:'痛',tag:'感受',ex:'頭が痛い。（頭很痛。）'},
     {jp:'大好き',reading:'daisuki',zh:'非常喜歡',tag:'情緒',ex:'日本語が大好きです。（我非常喜歡日文。）'},
     {jp:'怒る',reading:'okoru',zh:'生氣',tag:'情緒',ex:'怒らないでください。（請不要生氣。）'},
-    {jp:'驚く',reading:'odoroku',zh:'驚訝',tag:'情緒',ex:'突然のことに驚いた。（對突然發生的事感到驚訝。）'},
     {jp:'心配',reading:'shinpai',zh:'擔心',tag:'情緒',ex:'心配しないでください。（請不要擔心。）'},
     {jp:'安心',reading:'anshin',zh:'放心',tag:'情緒',ex:'安心しました。（我放心了。）'},
     {jp:'緊張',reading:'kinchou',zh:'緊張',tag:'情緒',ex:'試験前は緊張します。（考試前很緊張。）'},
@@ -1234,56 +601,50 @@ const vocabDB = {
     {jp:'感動',reading:'kandou',zh:'感動',tag:'情緒',ex:'映画を見て感動した。（看電影後很感動。）'},
     {jp:'後悔',reading:'koukai',zh:'後悔',tag:'情緒',ex:'あの時の選択を後悔している。（後悔當時的選擇。）'},
     {jp:'満足',reading:'manzoku',zh:'滿足',tag:'情緒',ex:'仕事に満足しています。（對工作感到滿足。）'},
-    {jp:'不満',reading:'fuman',zh:'不滿',tag:'情緒',ex:'結果に不満があります。（對結果不滿。）'},
     {jp:'幸せ',reading:'shiawase',zh:'幸福',tag:'情緒',ex:'今がとても幸せです。（現在非常幸福。）'},
     {jp:'辛い',reading:'tsurai',zh:'痛苦的',tag:'情緒',ex:'別れは辛い。（分別是痛苦的。）'},
-    {jp:'恋しい',reading:'koishii',zh:'思念的',tag:'情緒',ex:'故郷が恋しいです。（思念故鄉。）'},
     {jp:'懐かしい',reading:'natsukashii',zh:'懷念的',tag:'情緒',ex:'懐かしい音楽を聴いた。（聽了懷念的音樂。）'},
     {jp:'うらやましい',reading:'urayamashii',zh:'羨慕的',tag:'情緒',ex:'友達の旅行がうらやましい。（羨慕朋友的旅行。）'},
-    {jp:'照れる',reading:'tereru',zh:'害羞',tag:'情緒',ex:'褒められると照れます。（被稱讚就會害羞。）'},
     {jp:'落ち込む',reading:'ochikkomu',zh:'沮喪',tag:'情緒',ex:'失敗して落ち込んでいる。（因失敗而沮喪。）'},
     {jp:'元気',reading:'genki',zh:'有精神',tag:'感受',ex:'今日は元気です。（今天很有精神。）'},
     {jp:'気分',reading:'kibun',zh:'心情',tag:'感受',ex:'今日は気分がいいです。（今天心情很好。）'},
     {jp:'ストレス',reading:'sutoresu',zh:'壓力',tag:'感受',ex:'最近ストレスが多い。（最近壓力很大。）'},
-    {jp:'癒し',reading:'iyashi',zh:'療癒',tag:'感受',ex:'猫が癒しになる。（貓成為療癒。）'},
     {jp:'孤独',reading:'kodoku',zh:'孤獨',tag:'感受',ex:'一人でいると孤独を感じる。（一個人時感到孤獨。）'},
     {jp:'勇気',reading:'yuuki',zh:'勇氣',tag:'感受',ex:'勇気を出してください。（請拿出勇氣。）'},
     {jp:'自信',reading:'jishin',zh:'自信',tag:'感受',ex:'自信を持ちましょう。（要有自信。）'},
-    {jp:'諦める',reading:'akirameru',zh:'放棄',tag:'動詞',ex:'諦めないでください。（請不要放棄。）'},
     {jp:'頑張る',reading:'ganbaru',zh:'加油',tag:'動詞',ex:'頑張ってください！（請加油！）'},
     {jp:'笑う',reading:'warau',zh:'笑',tag:'動詞',ex:'笑顔がきれいですね。（笑容很美呢。）'},
     {jp:'泣く',reading:'naku',zh:'哭',tag:'動詞',ex:'映画を見て泣きました。（看電影哭了。）'},
-    {jp:'驚かす',reading:'odorokasu',zh:'嚇一跳',tag:'動詞',ex:'びっくりさせないで！（不要嚇我！）'},
     {jp:'励ます',reading:'hagemasu',zh:'鼓勵',tag:'動詞',ex:'友達を励まします。（鼓勵朋友。）'},
     {jp:'慰める',reading:'nagusameru',zh:'安慰',tag:'動詞',ex:'泣いている子を慰めます。（安慰哭泣的孩子。）'},
     {jp:'喜ぶ',reading:'yorokobu',zh:'喜悅',tag:'動詞',ex:'プレゼントをもらって喜んだ。（收到禮物很喜悅。）'},
-    {jp:'恐れる',reading:'osoreru',zh:'恐懼',tag:'動詞',ex:'失敗を恐れないで。（不要害怕失敗。）'},
     {jp:'焦る',reading:'aseru',zh:'著急',tag:'動詞',ex:'焦らないでください。（請不要著急。）'},
-    {jp:'迷う',reading:'mayou',zh:'迷惑',tag:'動詞',ex:'どうすればいいか迷っている。（在迷惑該怎麼做。）'},
+    {jp:'迷う',reading:'mayou',zh:'猶豫',tag:'動詞',ex:'どうすればいいか迷っている。（在猶豫該怎麼做。）'},
     {jp:'期待',reading:'kitai',zh:'期待',tag:'感受',ex:'結果を期待しています。（期待結果。）'},
-    {jp:'失望',reading:'shitsubou',zh:'失望',tag:'感受',ex:'失望しないでください。（請不要失望。）'},
     {jp:'希望',reading:'kibou',zh:'希望',tag:'感受',ex:'希望を持ちましょう。（要抱持希望。）'},
     {jp:'愛',reading:'ai',zh:'愛',tag:'情緒',ex:'愛は大切です。（愛很重要。）'},
-    {jp:'信頼',reading:'shinrai',zh:'信任',tag:'情緒',ex:'あなたを信頼しています。（我信任你。）'},
     {jp:'感謝',reading:'kansha',zh:'感謝',tag:'情緒',ex:'感謝の気持ちを伝えます。（傳達感謝的心情。）'},
-    {jp:'羞恥心',reading:'shuuchishin',zh:'羞恥心',tag:'情緒',ex:'羞恥心があります。（有羞恥心。）'},
     {jp:'誇り',reading:'hokori',zh:'驕傲',tag:'情緒',ex:'日本語が話せることが誇りです。（能說日文是我的驕傲。）'},
-    {jp:'嫉妬',reading:'shitto',zh:'嫉妒',tag:'情緒',ex:'嫉妬しないようにします。（盡量不嫉妒。）'},
     {jp:'優しい',reading:'yasashii',zh:'溫柔的',tag:'形容詞',ex:'彼女は優しい人です。（她是溫柔的人。）'},
-    {jp:'冷たい',reading:'tsumetai',zh:'冷漠的',tag:'形容詞',ex:'冷たい態度をとる。（態度冷漠。）'},
-    {jp:'暖かい',reading:'atatakai',zh:'溫暖的',tag:'形容詞',ex:'暖かい言葉をありがとう。（謝謝你溫暖的話語。）'},
-    {jp:'落ち着く',reading:'ochitsuku',zh:'冷靜下來',tag:'動詞',ex:'深呼吸して落ち着きます。（深呼吸冷靜下來。）'},
-    {jp:'気にする',reading:'ki ni suru',zh:'在意',tag:'動詞',ex:'気にしないでください。（請不要在意。）'},
-    {jp:'楽になる',reading:'raku ni naru',zh:'輕鬆了',tag:'動詞',ex:'話したら楽になった。（說出來後輕鬆了。）'},
+    {jp:'落ち着く',reading:'ochitsuku',zh:'冷靜',tag:'動詞',ex:'深呼吸して落ち着きます。（深呼吸冷靜下來。）'},
     {jp:'がっかり',reading:'gakkari',zh:'失望',tag:'情緒',ex:'結果にがっかりした。（對結果感到失望。）'},
     {jp:'ほっとする',reading:'hotto suru',zh:'鬆了一口氣',tag:'情緒',ex:'無事でほっとした。（平安無事地鬆了一口氣。）'},
-    {jp:'むかつく',reading:'mukatsuku',zh:'惱火',tag:'情緒',ex:'理不尽なことにむかつく。（對不合理的事感到惱火。）'},
     {jp:'ドキドキ',reading:'dokidoki',zh:'心跳加速',tag:'感受',ex:'告白するときドキドキした。（告白時心跳加速。）'},
     {jp:'ワクワク',reading:'wakuwaku',zh:'興奮期待',tag:'感受',ex:'旅行前はワクワクします。（旅行前很興奮期待。）'},
     {jp:'イライラ',reading:'iraira',zh:'煩躁',tag:'感受',ex:'待たされてイライラした。（等太久感到煩躁。）'},
-    {jp:'ぼんやり',reading:'bonyari',zh:'恍惚',tag:'感受',ex:'ぼんやりと空を見ている。（恍惚地看著天空。）'},
-    {jp:'気持ち',reading:'kimochi',zh:'心情／感覺',tag:'感受',ex:'気持ちを伝えます。（傳達心情。）'},
+    {jp:'気持ち',reading:'kimochi',zh:'心情',tag:'感受',ex:'気持ちを伝えます。（傳達心情。）'},
+    {jp:'不満',reading:'fuman',zh:'不滿',tag:'情緒',ex:'結果に不満があります。（對結果不滿。）'},
+    {jp:'驚く',reading:'odoroku',zh:'驚訝',tag:'情緒',ex:'突然のことに驚いた。（對突然發生的事感到驚訝。）'},
+    {jp:'恋しい',reading:'koishii',zh:'思念的',tag:'情緒',ex:'故郷が恋しいです。（思念故鄉。）'},
+    {jp:'照れる',reading:'tereru',zh:'害羞',tag:'情緒',ex:'褒められると照れます。（被稱讚就會害羞。）'},
+    {jp:'嫉妬',reading:'shitto',zh:'嫉妒',tag:'情緒',ex:'嫉妬しないようにします。（盡量不嫉妒。）'},
+    {jp:'冷たい',reading:'tsumetai',zh:'冷漠的',tag:'形容詞',ex:'冷たい態度をとる。（態度冷漠。）'},
+    {jp:'信頼',reading:'shinrai',zh:'信任',tag:'情緒',ex:'あなたを信頼しています。（我信任你。）'},
+    {jp:'諦める',reading:'akirameru',zh:'放棄',tag:'動詞',ex:'諦めないでください。（請不要放棄。）'},
+    {jp:'むかつく',reading:'mukatsuku',zh:'惱火',tag:'情緒',ex:'理不尽なことにむかつく。（對不合理的事感到惱火。）'},
+    {jp:'癒し',reading:'iyashi',zh:'療癒',tag:'感受',ex:'猫が癒しになる。（貓成為療癒。）'},
     {jp:'表情',reading:'hyoujou',zh:'表情',tag:'感受',ex:'明るい表情ですね。（表情很開朗呢。）'},
+    {jp:'楽になる',reading:'raku ni naru',zh:'輕鬆了',tag:'動詞',ex:'話したら楽になった。（說出來後輕鬆了。）'},
   ],
   '工作學習': [
     {jp:'仕事',reading:'shigoto',zh:'工作',tag:'工作',ex:'仕事が忙しい。（工作很忙。）'},
@@ -1299,23 +660,17 @@ const vocabDB = {
     {jp:'会社',reading:'kaisha',zh:'公司',tag:'工作',ex:'会社に行きます。（去公司。）'},
     {jp:'同僚',reading:'douryou',zh:'同事',tag:'工作',ex:'同僚と昼食を食べます。（和同事吃午餐。）'},
     {jp:'上司',reading:'joushi',zh:'上司',tag:'工作',ex:'上司に報告します。（向上司報告。）'},
-    {jp:'部下',reading:'buka',zh:'下屬',tag:'工作',ex:'部下を指導します。（指導下屬。）'},
     {jp:'給料',reading:'kyuuryou',zh:'薪水',tag:'工作',ex:'給料が上がった。（薪水漲了。）'},
     {jp:'残業',reading:'zangyou',zh:'加班',tag:'工作',ex:'今日は残業します。（今天要加班。）'},
     {jp:'休暇',reading:'kyuuka',zh:'休假',tag:'工作',ex:'休暇を取ります。（請假。）'},
-    {jp:'プレゼン',reading:'purezen',zh:'簡報',tag:'工作',ex:'明日プレゼンがあります。（明天有簡報。）'},
     {jp:'報告書',reading:'houkokusho',zh:'報告書',tag:'工作',ex:'報告書を書きます。（寫報告書。）'},
     {jp:'契約',reading:'keiyaku',zh:'合約',tag:'工作',ex:'契約を結びます。（簽合約。）'},
-    {jp:'クライアント',reading:'kuraianto',zh:'客戶',tag:'工作',ex:'クライアントと打ち合わせます。（和客戶開會。）'},
     {jp:'プロジェクト',reading:'purojekuto',zh:'專案',tag:'工作',ex:'新しいプロジェクトが始まった。（新專案開始了。）'},
     {jp:'目標',reading:'mokuhyou',zh:'目標',tag:'學習',ex:'目標を決めます。（決定目標。）'},
     {jp:'計画',reading:'keikaku',zh:'計畫',tag:'工作',ex:'計画を立てます。（制定計畫。）'},
     {jp:'スケジュール',reading:'sukejuuru',zh:'行程表',tag:'工作',ex:'スケジュールを確認します。（確認行程表。）'},
     {jp:'資料',reading:'shiryou',zh:'資料',tag:'工作',ex:'資料を準備します。（準備資料。）'},
-    {jp:'パソコン',reading:'pasokon',zh:'電腦',tag:'工作',ex:'パソコンで仕事をします。（用電腦工作。）'},
-    {jp:'スマホ',reading:'sumaho',zh:'智慧型手機',tag:'工具',ex:'スマホで連絡します。（用手機聯絡。）'},
-    {jp:'アプリ',reading:'apuri',zh:'應用程式',tag:'工具',ex:'便利なアプリを使います。（使用方便的應用程式。）'},
-    {jp:'インターネット',reading:'intaanetto',zh:'網路',tag:'工具',ex:'インターネットで調べます。（在網路上查詢。）'},
+    {jp:'パソコン',reading:'pasokon',zh:'電腦',tag:'工具',ex:'パソコンで仕事をします。（用電腦工作。）'},
     {jp:'調べる',reading:'shiraberu',zh:'查詢',tag:'動詞',ex:'辞書で調べます。（用字典查詢。）'},
     {jp:'覚える',reading:'oboeru',zh:'記住',tag:'動詞',ex:'単語を覚えます。（記住單字。）'},
     {jp:'忘れる',reading:'wasureru',zh:'忘記',tag:'動詞',ex:'宿題を忘れた。（忘記作業了。）'},
@@ -1324,17 +679,13 @@ const vocabDB = {
     {jp:'確認する',reading:'kakunin suru',zh:'確認',tag:'動詞',ex:'内容を確認します。（確認內容。）'},
     {jp:'提出する',reading:'teishutsu suru',zh:'提交',tag:'動詞',ex:'レポートを提出します。（提交報告。）'},
     {jp:'発表する',reading:'happyou suru',zh:'發表',tag:'動詞',ex:'研究を発表します。（發表研究。）'},
-    {jp:'相談する',reading:'soudan suru',zh:'商量',tag:'動詞',ex:'先生に相談します。（和老師商量。）'},
     {jp:'面接',reading:'mensetsu',zh:'面試',tag:'工作',ex:'明日面接があります。（明天有面試。）'},
-    {jp:'履歴書',reading:'rirekisho',zh:'履歷',tag:'工作',ex:'履歴書を書きます。（寫履歷。）'},
     {jp:'昇進',reading:'shoushin',zh:'升職',tag:'工作',ex:'昇進おめでとう！（恭喜升職！）'},
     {jp:'転職',reading:'tenshoku',zh:'換工作',tag:'工作',ex:'転職を考えています。（在考慮換工作。）'},
     {jp:'大学',reading:'daigaku',zh:'大學',tag:'學習',ex:'大学で勉強します。（在大學學習。）'},
     {jp:'授業',reading:'jugyou',zh:'課程',tag:'學習',ex:'授業に出席します。（出席課程。）'},
-    {jp:'レポート',reading:'repooto',zh:'報告',tag:'學習',ex:'レポートを書きます。（寫報告。）'},
     {jp:'図書館',reading:'toshokan',zh:'圖書館',tag:'場所',ex:'図書館で勉強します。（在圖書館學習。）'},
     {jp:'辞書',reading:'jisho',zh:'字典',tag:'工具',ex:'辞書を使います。（使用字典。）'},
-    {jp:'教科書',reading:'kyoukasho',zh:'教科書',tag:'工具',ex:'教科書を読みます。（讀教科書。）'},
     {jp:'ノート',reading:'nooto',zh:'筆記本',tag:'工具',ex:'ノートにメモします。（在筆記本上記錄。）'},
     {jp:'集中',reading:'shuuchuu',zh:'專注',tag:'學習',ex:'集中して勉強します。（專注地學習。）'},
     {jp:'復習',reading:'fukushuu',zh:'複習',tag:'學習',ex:'毎日復習します。（每天複習。）'},
@@ -1344,21 +695,25 @@ const vocabDB = {
     {jp:'文法',reading:'bunpou',zh:'文法',tag:'學習',ex:'文法を勉強します。（學習文法。）'},
     {jp:'発音',reading:'hatsuon',zh:'發音',tag:'學習',ex:'発音を練習します。（練習發音。）'},
     {jp:'翻訳',reading:'honyaku',zh:'翻譯',tag:'學習',ex:'文章を翻訳します。（翻譯文章。）'},
-    {jp:'辞める',reading:'yameru',zh:'辭職',tag:'動詞',ex:'会社を辞めます。（辭職。）'},
-    {jp:'採用する',reading:'saiyou suru',zh:'錄用',tag:'動詞',ex:'新入社員を採用します。（錄用新員工。）'},
-    {jp:'評価する',reading:'hyouka suru',zh:'評價',tag:'動詞',ex:'仕事を評価されました。（工作被評價了。）'},
     {jp:'達成する',reading:'tassei suru',zh:'達成',tag:'動詞',ex:'目標を達成しました。（達成目標了。）'},
     {jp:'挑戦する',reading:'chousen suru',zh:'挑戰',tag:'動詞',ex:'新しいことに挑戦します。（挑戰新事物。）'},
     {jp:'成長する',reading:'seichou suru',zh:'成長',tag:'動詞',ex:'毎日成長します。（每天成長。）'},
     {jp:'失敗する',reading:'shippai suru',zh:'失敗',tag:'動詞',ex:'失敗から学びます。（從失敗中學習。）'},
     {jp:'成功する',reading:'seikou suru',zh:'成功',tag:'動詞',ex:'努力すれば成功します。（努力就會成功。）'},
-    {jp:'締め切り',reading:'shimekiri',zh:'截止日',tag:'工作',ex:'締め切りに間に合った。（趕上截止日了。）'},
     {jp:'スキル',reading:'sukiru',zh:'技能',tag:'工作',ex:'スキルを身につけます。（掌握技能。）'},
     {jp:'経験',reading:'keiken',zh:'經驗',tag:'工作',ex:'経験を積みます。（累積經驗。）'},
-    {jp:'キャリア',reading:'kyaria',zh:'職涯',tag:'工作',ex:'キャリアを考えます。（思考職涯。）'},
     {jp:'研修',reading:'kenshu',zh:'培訓',tag:'工作',ex:'新人研修があります。（有新人培訓。）'},
     {jp:'出張',reading:'shuccho',zh:'出差',tag:'工作',ex:'大阪に出張します。（去大阪出差。）'},
     {jp:'在宅',reading:'zaitaku',zh:'在家',tag:'工作',ex:'在宅ワークをします。（在家工作。）'},
+    {jp:'部下',reading:'buka',zh:'下屬',tag:'工作',ex:'部下を指導します。（指導下屬。）'},
+    {jp:'採用する',reading:'saiyou suru',zh:'錄用',tag:'動詞',ex:'新入社員を採用します。（錄用新員工。）'},
+    {jp:'キャリア',reading:'kyaria',zh:'職涯',tag:'工作',ex:'キャリアを考えます。（思考職涯。）'},
+    {jp:'プレゼン',reading:'purezen',zh:'簡報',tag:'工作',ex:'明日プレゼンがあります。（明天有簡報。）'},
+    {jp:'インターネット',reading:'intaanetto',zh:'網路',tag:'工具',ex:'インターネットで調べます。（在網路上查詢。）'},
+    {jp:'アプリ',reading:'apuri',zh:'應用程式',tag:'工具',ex:'便利なアプリを使います。（使用方便的應用程式。）'},
+    {jp:'スマホ',reading:'sumaho',zh:'智慧手機',tag:'工具',ex:'スマホで連絡します。（用手機聯絡。）'},
+    {jp:'相談する',reading:'soudan suru',zh:'商量',tag:'動詞',ex:'先生に相談します。（和老師商量。）'},
+    {jp:'教科書',reading:'kyoukasho',zh:'教科書',tag:'工具',ex:'教科書を読みます。（讀教科書。）'},
   ],
   '家庭關係': [
     {jp:'家族',reading:'kazoku',zh:'家人',tag:'家庭',ex:'家族と旅行します。（和家人旅行。）'},
@@ -1379,64 +734,62 @@ const vocabDB = {
     {jp:'妻',reading:'tsuma',zh:'妻子',tag:'家庭',ex:'妻と相談します。（和妻子商量。）'},
     {jp:'息子',reading:'musuko',zh:'兒子',tag:'家庭',ex:'息子は三歳です。（兒子三歲。）'},
     {jp:'娘',reading:'musume',zh:'女兒',tag:'家庭',ex:'娘は音楽が好きです。（女兒喜歡音樂。）'},
-    {jp:'叔父',reading:'oji',zh:'叔父／舅舅',tag:'家庭',ex:'叔父にプレゼントをもらった。（收到叔父的禮物。）'},
-    {jp:'叔母',reading:'oba',zh:'叔母／舅媽',tag:'家庭',ex:'叔母と食事をしました。（和叔母吃飯了。）'},
+    {jp:'叔父',reading:'oji',zh:'叔父',tag:'家庭',ex:'叔父にプレゼントをもらった。（收到叔父的禮物。）'},
+    {jp:'叔母',reading:'oba',zh:'叔母',tag:'家庭',ex:'叔母と食事をしました。（和叔母吃飯了。）'},
     {jp:'いとこ',reading:'itoko',zh:'表兄弟姊妹',tag:'家庭',ex:'いとこと遊びました。（和表兄弟玩了。）'},
     {jp:'親戚',reading:'shinseki',zh:'親戚',tag:'家庭',ex:'お正月に親戚が集まります。（新年親戚聚在一起。）'},
     {jp:'近所',reading:'kinjo',zh:'鄰居',tag:'關係',ex:'近所の人と仲がいい。（和鄰居感情好。）'},
     {jp:'先輩',reading:'senpai',zh:'前輩',tag:'關係',ex:'先輩にお世話になっています。（受前輩照顧。）'},
     {jp:'後輩',reading:'kouhai',zh:'後輩',tag:'關係',ex:'後輩を指導します。（指導後輩。）'},
     {jp:'恋人',reading:'koibito',zh:'戀人',tag:'關係',ex:'恋人と旅行します。（和戀人旅行。）'},
-    {jp:'片思い',reading:'kataomoi',zh:'單戀',tag:'關係',ex:'片思いをしています。（在單戀中。）'},
     {jp:'告白',reading:'kokuhaku',zh:'告白',tag:'關係',ex:'勇気を出して告白した。（鼓起勇氣告白了。）'},
     {jp:'付き合う',reading:'tsukiau',zh:'交往',tag:'動詞',ex:'一年付き合っています。（交往一年了。）'},
     {jp:'別れる',reading:'wakareru',zh:'分手',tag:'動詞',ex:'彼女と別れました。（和女友分手了。）'},
     {jp:'仲直り',reading:'nakanaori',zh:'和好',tag:'動詞',ex:'喧嘩して仲直りした。（吵架後和好了。）'},
     {jp:'喧嘩',reading:'kenka',zh:'吵架',tag:'關係',ex:'兄弟で喧嘩しました。（兄弟吵架了。）'},
-    {jp:'仲良し',reading:'nakayoshi',zh:'要好的',tag:'關係',ex:'仲良しの友達がいます。（有要好的朋友。）'},
     {jp:'信頼する',reading:'shinrai suru',zh:'信任',tag:'動詞',ex:'あなたを信頼しています。（我信任你。）'},
     {jp:'支える',reading:'sasaeru',zh:'支持',tag:'動詞',ex:'家族を支えます。（支持家人。）'},
     {jp:'愛する',reading:'aisuru',zh:'愛',tag:'動詞',ex:'家族を愛しています。（愛著家人。）'},
     {jp:'尊敬する',reading:'sonkei suru',zh:'尊敬',tag:'動詞',ex:'先生を尊敬しています。（尊敬老師。）'},
     {jp:'感謝する',reading:'kansha suru',zh:'感謝',tag:'動詞',ex:'両親に感謝します。（感謝父母。）'},
     {jp:'育てる',reading:'sodateru',zh:'養育',tag:'動詞',ex:'子供を育てます。（養育孩子。）'},
-    {jp:'産む',reading:'umu',zh:'生孩子',tag:'動詞',ex:'赤ちゃんを産みました。（生了寶寶。）'},
-    {jp:'離婚',reading:'rikon',zh:'離婚',tag:'家庭',ex:'離婚は辛いです。（離婚很痛苦。）'},
-    {jp:'再婚',reading:'saikon',zh:'再婚',tag:'家庭',ex:'再婚します。（再婚。）'},
     {jp:'家庭',reading:'katei',zh:'家庭',tag:'家庭',ex:'幸せな家庭を作りたい。（想建立幸福的家庭。）'},
     {jp:'実家',reading:'jikka',zh:'老家',tag:'家庭',ex:'実家に帰ります。（回老家。）'},
     {jp:'一人暮らし',reading:'hitori gurashi',zh:'獨居',tag:'生活',ex:'一人暮らしを始めました。（開始獨居了。）'},
-    {jp:'同棲',reading:'dousei',zh:'同居',tag:'生活',ex:'彼女と同棲しています。（和女友同居。）'},
     {jp:'世話をする',reading:'sewa wo suru',zh:'照顧',tag:'動詞',ex:'老人の世話をします。（照顧老人。）'},
     {jp:'絆',reading:'kizuna',zh:'羈絆',tag:'關係',ex:'家族の絆は大切です。（家人的羈絆很重要。）'},
     {jp:'思いやり',reading:'omoiyari',zh:'體貼',tag:'關係',ex:'思いやりのある人です。（是個體貼的人。）'},
     {jp:'約束',reading:'yakusoku',zh:'約定',tag:'關係',ex:'約束を守ります。（遵守約定。）'},
-    {jp:'秘密',reading:'himitsu',zh:'秘密',tag:'關係',ex:'秘密を守ります。（保守秘密。）'},
-    {jp:'誤解',reading:'gokai',zh:'誤解',tag:'關係',ex:'誤解を解きます。（解除誤解。）'},
     {jp:'謝る',reading:'ayamaru',zh:'道歉',tag:'動詞',ex:'素直に謝ります。（坦誠地道歉。）'},
     {jp:'許す',reading:'yurusu',zh:'原諒',tag:'動詞',ex:'許してください。（請原諒我。）'},
     {jp:'助ける',reading:'tasukeru',zh:'幫助',tag:'動詞',ex:'困った時は助けます。（困難時幫助。）'},
-    {jp:'相談する',reading:'soudan suru',zh:'商量',tag:'動詞',ex:'悩みを相談します。（商量煩惱。）'},
-    {jp:'励ます',reading:'hagemasu',zh:'鼓勵',tag:'動詞',ex:'友達を励まします。（鼓勵朋友。）'},
     {jp:'一緒',reading:'issho',zh:'一起',tag:'關係',ex:'一緒にいると楽しい。（在一起很快樂。）'},
     {jp:'大切',reading:'taisetsu',zh:'重要',tag:'形容詞',ex:'家族は大切です。（家人很重要。）'},
     {jp:'笑顔',reading:'egao',zh:'笑容',tag:'表情',ex:'笑顔が素敵ですね。（笑容很美呢。）'},
-    {jp:'涙',reading:'namida',zh:'眼淚',tag:'表情',ex:'涙が止まらない。（眼淚停不下來。）'},
-    {jp:'抱っこ',reading:'dakko',zh:'抱',tag:'行為',ex:'赤ちゃんを抱っこします。（抱嬰兒。）'},
-    {jp:'手をつなぐ',reading:'te wo tsunagu',zh:'牽手',tag:'行為',ex:'子供と手をつなぎます。（和孩子牽手。）'},
     {jp:'プレゼント',reading:'purezento',zh:'禮物',tag:'行為',ex:'誕生日にプレゼントをあげる。（生日送禮物。）'},
     {jp:'誕生日',reading:'tanjoubi',zh:'生日',tag:'祝賀',ex:'誕生日おめでとう！（生日快樂！）'},
     {jp:'記念日',reading:'kinenbi',zh:'紀念日',tag:'祝賀',ex:'記念日を祝います。（慶祝紀念日。）'},
+    {jp:'離婚',reading:'rikon',zh:'離婚',tag:'家庭',ex:'離婚は辛いです。（離婚很痛苦。）'},
+    {jp:'再婚',reading:'saikon',zh:'再婚',tag:'家庭',ex:'再婚します。（再婚。）'},
+    {jp:'同棲',reading:'dousei',zh:'同居',tag:'生活',ex:'彼女と同棲しています。（和女友同居。）'},
+    {jp:'仲良し',reading:'nakayoshi',zh:'要好的朋友',tag:'關係',ex:'仲良しの友達がいます。（有要好的朋友。）'},
+    {jp:'片思い',reading:'kataomoi',zh:'單戀',tag:'關係',ex:'片思いをしています。（在單戀中。）'},
+    {jp:'涙',reading:'namida',zh:'眼淚',tag:'表情',ex:'涙が止まらない。（眼淚停不下來。）'},
+    {jp:'手をつなぐ',reading:'te wo tsunagu',zh:'牽手',tag:'行為',ex:'子供と手をつなぎます。（和孩子牽手。）'},
     {jp:'お祝い',reading:'oiwai',zh:'慶祝',tag:'祝賀',ex:'お祝いをします。（慶祝。）'},
-    {jp:'葬式',reading:'soushiki',zh:'葬禮',tag:'行事',ex:'葬式に参列します。（參加葬禮。）'},
+    {jp:'相談する',reading:'soudan suru',zh:'商量',tag:'動詞',ex:'悩みを相談します。（商量煩惱。）'},
+    {jp:'励ます',reading:'hagemasu',zh:'鼓勵',tag:'動詞',ex:'友達を励まします。（鼓勵朋友。）'},
+    {jp:'秘密',reading:'himitsu',zh:'秘密',tag:'關係',ex:'秘密を守ります。（保守秘密。）'},
+    {jp:'誤解',reading:'gokai',zh:'誤解',tag:'關係',ex:'誤解を解きます。（解除誤解。）'},
+    {jp:'産む',reading:'umu',zh:'生孩子',tag:'動詞',ex:'赤ちゃんを産みました。（生了寶寶。）'},
   ],
   '身體健康': [
     {jp:'体',reading:'karada',zh:'身體',tag:'身體',ex:'体を大切にしてください。（請保重身體。）'},
     {jp:'頭',reading:'atama',zh:'頭',tag:'身體',ex:'頭が痛いです。（頭很痛。）'},
     {jp:'手',reading:'te',zh:'手',tag:'身體',ex:'手を洗ってください。（請洗手。）'},
-    {jp:'足',reading:'ashi',zh:'腳／腿',tag:'身體',ex:'足が疲れた。（腳累了。）'},
-    {jp:'病院',reading:'byouin',zh:'醫院',tag:'健康',ex:'病院に行きます。（去醫院。）'},
-    {jp:'薬',reading:'kusuri',zh:'藥',tag:'健康',ex:'薬を飲んでください。（請吃藥。）'},
+    {jp:'足',reading:'ashi',zh:'腳',tag:'身體',ex:'足が疲れた。（腳累了。）'},
+    {jp:'病院',reading:'byouin',zh:'醫院',tag:'醫療',ex:'病院に行きます。（去醫院。）'},
+    {jp:'薬',reading:'kusuri',zh:'藥',tag:'醫療',ex:'薬を飲んでください。（請吃藥。）'},
     {jp:'運動',reading:'undou',zh:'運動',tag:'健康',ex:'毎朝運動します。（每天早上運動。）'},
     {jp:'睡眠',reading:'suimin',zh:'睡眠',tag:'健康',ex:'睡眠が大切です。（睡眠很重要。）'},
     {jp:'風邪',reading:'kaze',zh:'感冒',tag:'疾病',ex:'風邪をひいた。（感冒了。）'},
@@ -1450,37 +803,29 @@ const vocabDB = {
     {jp:'背中',reading:'senaka',zh:'背部',tag:'身體',ex:'背中が痛い。（背部很痛。）'},
     {jp:'お腹',reading:'onaka',zh:'肚子',tag:'身體',ex:'お腹が痛い。（肚子痛。）'},
     {jp:'心臓',reading:'shinzou',zh:'心臟',tag:'身體',ex:'心臓が強く打っている。（心臟劇烈跳動。）'},
-    {jp:'肺',reading:'hai',zh:'肺',tag:'身體',ex:'肺が弱い。（肺部較弱。）'},
     {jp:'血液',reading:'ketsueki',zh:'血液',tag:'身體',ex:'血液検査をします。（做血液檢查。）'},
     {jp:'骨',reading:'hone',zh:'骨頭',tag:'身體',ex:'骨が折れた。（骨折了。）'},
     {jp:'筋肉',reading:'kinniku',zh:'肌肉',tag:'身體',ex:'筋肉痛になった。（肌肉酸痛了。）'},
     {jp:'皮膚',reading:'hifu',zh:'皮膚',tag:'身體',ex:'皮膚が乾燥している。（皮膚很乾燥。）'},
     {jp:'熱',reading:'netsu',zh:'發燒',tag:'疾病',ex:'熱が出た。（發燒了。）'},
     {jp:'咳',reading:'seki',zh:'咳嗽',tag:'疾病',ex:'咳が止まらない。（咳嗽停不下來。）'},
-    {jp:'くしゃみ',reading:'kushami',zh:'打噴嚏',tag:'疾病',ex:'くしゃみが出ます。（會打噴嚏。）'},
     {jp:'下痢',reading:'geri',zh:'腹瀉',tag:'疾病',ex:'下痢になりました。（腹瀉了。）'},
     {jp:'アレルギー',reading:'arerugii',zh:'過敏',tag:'疾病',ex:'花粉アレルギーがあります。（我有花粉過敏。）'},
     {jp:'怪我',reading:'kega',zh:'受傷',tag:'疾病',ex:'怪我をしました。（受傷了。）'},
     {jp:'傷',reading:'kizu',zh:'傷口',tag:'疾病',ex:'傷に薬を塗ります。（在傷口塗藥。）'},
     {jp:'手術',reading:'shujutsu',zh:'手術',tag:'醫療',ex:'手術を受けます。（接受手術。）'},
     {jp:'注射',reading:'chuusha',zh:'打針',tag:'醫療',ex:'注射を打ちます。（打針。）'},
-    {jp:'レントゲン',reading:'rentogen',zh:'X光',tag:'醫療',ex:'レントゲンを撮ります。（照X光。）'},
     {jp:'血圧',reading:'ketsuatsu',zh:'血壓',tag:'健康',ex:'血圧を測ります。（量血壓。）'},
     {jp:'体温',reading:'taion',zh:'體溫',tag:'健康',ex:'体温を測ります。（量體溫。）'},
     {jp:'体重',reading:'taijuu',zh:'體重',tag:'健康',ex:'体重が増えた。（體重增加了。）'},
-    {jp:'健康診断',reading:'kenkou shindan',zh:'健康檢查',tag:'醫療',ex:'健康診断を受けます。（接受健康檢查。）'},
     {jp:'栄養',reading:'eiyou',zh:'營養',tag:'健康',ex:'栄養のある食事をします。（吃有營養的食物。）'},
-    {jp:'ビタミン',reading:'bitamin',zh:'維他命',tag:'健康',ex:'ビタミンCを摂ります。（攝取維他命C。）'},
     {jp:'水分',reading:'suibun',zh:'水分',tag:'健康',ex:'水分補給が大切です。（補充水分很重要。）'},
     {jp:'休む',reading:'yasumu',zh:'休息',tag:'動詞',ex:'体を休めます。（讓身體休息。）'},
     {jp:'治る',reading:'naoru',zh:'痊癒',tag:'動詞',ex:'風邪が治りました。（感冒痊癒了。）'},
-    {jp:'診る',reading:'miru',zh:'診察',tag:'動詞',ex:'医者に診てもらいます。（請醫生診察。）'},
-    {jp:'処方する',reading:'shohousuru',zh:'開藥',tag:'動詞',ex:'薬を処方されました。（被開了藥。）'},
     {jp:'入院する',reading:'nyuuin suru',zh:'住院',tag:'動詞',ex:'一週間入院しました。（住院了一週。）'},
     {jp:'退院する',reading:'taiin suru',zh:'出院',tag:'動詞',ex:'明日退院します。（明天出院。）'},
     {jp:'回復する',reading:'kaifuku suru',zh:'恢復',tag:'動詞',ex:'体が回復しました。（身體恢復了。）'},
     {jp:'予防する',reading:'yobou suru',zh:'預防',tag:'動詞',ex:'病気を予防します。（預防疾病。）'},
-    {jp:'消毒する',reading:'shoudoku suru',zh:'消毒',tag:'動詞',ex:'傷を消毒します。（消毒傷口。）'},
     {jp:'マスク',reading:'masuku',zh:'口罩',tag:'衛生',ex:'マスクをします。（戴口罩。）'},
     {jp:'ワクチン',reading:'wakuchin',zh:'疫苗',tag:'醫療',ex:'ワクチンを接種します。（接種疫苗。）'},
     {jp:'ヨガ',reading:'yoga',zh:'瑜珈',tag:'運動',ex:'毎朝ヨガをします。（每天早上做瑜珈。）'},
@@ -1489,388 +834,279 @@ const vocabDB = {
     {jp:'ストレッチ',reading:'sutouretchi',zh:'伸展',tag:'運動',ex:'寝る前にストレッチします。（睡前做伸展。）'},
     {jp:'深呼吸',reading:'shinkokyuu',zh:'深呼吸',tag:'健康',ex:'深呼吸してリラックスします。（深呼吸放鬆。）'},
     {jp:'歯磨き',reading:'hamigaki',zh:'刷牙',tag:'衛生',ex:'食後に歯磨きをします。（飯後刷牙。）'},
-    {jp:'洗顔',reading:'sengan',zh:'洗臉',tag:'衛生',ex:'朝に洗顔します。（早上洗臉。）'},
     {jp:'お風呂',reading:'ofuro',zh:'洗澡',tag:'衛生',ex:'毎日お風呂に入ります。（每天洗澡。）'},
     {jp:'手洗い',reading:'tearai',zh:'洗手',tag:'衛生',ex:'食事前に手洗いをします。（吃飯前洗手。）'},
-    {jp:'疲労',reading:'hirou',zh:'疲勞',tag:'感受',ex:'疲労が溜まっています。（疲勞累積了。）'},
+    {jp:'疲労',reading:'hirou',zh:'疲勞',tag:'症狀',ex:'疲労が溜まっています。（疲勞累積了。）'},
     {jp:'肩こり',reading:'katakori',zh:'肩膀酸痛',tag:'症狀',ex:'肩こりがひどい。（肩膀很酸痛。）'},
     {jp:'頭痛',reading:'zutsuu',zh:'頭痛',tag:'症狀',ex:'頭痛がします。（頭在痛。）'},
     {jp:'腰痛',reading:'youtsu',zh:'腰痛',tag:'症狀',ex:'腰痛で仕事ができない。（腰痛無法工作。）'},
     {jp:'めまい',reading:'memai',zh:'頭暈',tag:'症狀',ex:'めまいがします。（感到頭暈。）'},
     {jp:'吐き気',reading:'hakike',zh:'噁心',tag:'症狀',ex:'吐き気がします。（感到噁心。）'},
-    {jp:'食欲不振',reading:'shokuyoku fushin',zh:'食慾不振',tag:'症狀',ex:'食欲不振が続いています。（持續食慾不振。）'},
     {jp:'不眠症',reading:'fumin shou',zh:'失眠',tag:'症狀',ex:'不眠症に悩んでいます。（為失眠所苦。）'},
     {jp:'生活習慣',reading:'seikatsu shuukan',zh:'生活習慣',tag:'健康',ex:'生活習慣を改善します。（改善生活習慣。）'},
-    {jp:'バランス',reading:'baransu',zh:'平衡',tag:'健康',ex:'食事のバランスが大切です。（飲食均衡很重要。）'},
+    {jp:'健康診断',reading:'kenkou shindan',zh:'健康檢查',tag:'醫療',ex:'健康診断を受けます。（接受健康檢查。）'},
+    {jp:'消毒する',reading:'shoudoku suru',zh:'消毒',tag:'動詞',ex:'傷を消毒します。（消毒傷口。）'},
+    {jp:'くしゃみ',reading:'kushami',zh:'打噴嚏',tag:'疾病',ex:'くしゃみが出ます。（會打噴嚏。）'},
+    {jp:'バランス',reading:'baransu',zh:'均衡',tag:'健康',ex:'食事のバランスが大切です。（飲食均衡很重要。）'},
+    {jp:'ビタミン',reading:'bitamin',zh:'維他命',tag:'健康',ex:'ビタミンCを摂ります。（攝取維他命C。）'},
+    {jp:'肺',reading:'hai',zh:'肺',tag:'身體',ex:'肺が弱い。（肺部較弱。）'},
   ],
 };
 
-// ---- VOCAB ----
-function speak(text, btn) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'ja-JP';
-  utter.rate = 0.85;
-  if (btn) {
-    btn.classList.add('speaking');
-    utter.onend = () => btn.classList.remove('speaking');
-  }
-  window.speechSynthesis.speak(utter);
-}
+const grammar = [
+  {
+    jp:'〜は〜です', zh:'主題助詞「は」+「です」（是）',
+    pattern:'[主語] は [名詞/形容詞] です',
+    examples:[
+      {jp:'わたしは学生です。',zh:'我是學生。'},
+      {jp:'これは本です。',zh:'這是書。'},
+      {jp:'東京は大きいです。',zh:'東京很大。'},
+    ]
+  },
+  {
+    jp:'〜を〜します', zh:'受格助詞「を」標示動詞的對象',
+    pattern:'[主語] は [名詞] を [動詞]',
+    examples:[
+      {jp:'りんごを食べます。',zh:'（我）吃蘋果。'},
+      {jp:'音楽を聴きます。',zh:'（我）聽音樂。'},
+      {jp:'日本語を勉強します。',zh:'（我）學習日文。'},
+    ]
+  },
+  {
+    jp:'〜に行きます', zh:'方向助詞「に」表示移動目的地',
+    pattern:'[場所] に 行きます／来ます／帰ります',
+    examples:[
+      {jp:'学校に行きます。',zh:'（我）去學校。'},
+      {jp:'日本に来ました。',zh:'（我）來到了日本。'},
+      {jp:'家に帰ります。',zh:'（我）回家。'},
+    ]
+  },
+  {
+    jp:'〜ですか？', zh:'疑問句語尾「か」',
+    pattern:'[文] ですか？ / [動詞] ますか？',
+    examples:[
+      {jp:'これはなんですか？',zh:'這是什麼？'},
+      {jp:'今、忙しいですか？',zh:'你現在忙嗎？'},
+      {jp:'一緒に行きますか？',zh:'要一起去嗎？'},
+    ]
+  },
+  {
+    jp:'〜たい', zh:'想要做〜（意志表現）',
+    pattern:'[動詞ます形語幹] + たいです',
+    examples:[
+      {jp:'日本に行きたいです。',zh:'我想去日本。'},
+      {jp:'寿司を食べたいです。',zh:'我想吃壽司。'},
+      {jp:'もっと勉強したいです。',zh:'我想多學一點。'},
+    ]
+  },
+];
 
+// ==================== STATE ====================
+let learned = new Set(JSON.parse(localStorage.getItem('learned') || '[]'));
+let xp = parseInt(localStorage.getItem('xp') || '0');
 let currentTheme = '日常生活';
+let quizData = [];
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
 
-function shuffleAndPick(arr, n) {
-  const shuffled = [...arr].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, n);
+// ==================== XP ====================
+function updateXP(add) {
+  xp += add;
+  localStorage.setItem('xp', xp);
+  document.getElementById('xp-count').textContent = xp + ' XP';
+  const levels = [[0,'初心者'],[50,'入門者'],[150,'初級者'],[300,'中級者'],[600,'上級者']];
+  let level = '初心者';
+  for (const [t, n] of levels) { if (xp >= t) level = n; }
+  document.getElementById('level-badge').textContent = level;
 }
 
-function selectTheme(btn, theme) {
-  document.querySelectorAll('.theme-chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  currentTheme = theme;
-  const picked = shuffleAndPick(vocabDB[theme] || [], 10);
-  renderVocabCards(picked);
-  updateXP(1);
+// ==================== TABS ====================
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  const tabs = ['hiragana','katakana','vocab','grammar','quiz'];
+  document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
+  if (name === 'quiz') initQuiz();
 }
 
-function renderVocabCards(vocabList) {
-  const grid = document.getElementById('vocab-grid');
-  grid.innerHTML = '';
-  vocabList.forEach(v => {
+// ==================== KANA ====================
+function buildKanaGrid(data, containerId, prefix) {
+  const grid = document.getElementById(containerId);
+  data.forEach((k, i) => {
     const card = document.createElement('div');
-    card.className = 'vocab-card';
-    const jpSafe = v.jp.replace(/'/g, "\\'");
-    card.innerHTML = `
-      <span class="vocab-tag">${v.tag}</span>
-      <div class="vocab-jp">${v.jp}</div>
-      <div class="vocab-reading">${v.reading}</div>
-      <div class="vocab-zh">${v.zh}</div>
-      <button class="speak-btn" onclick="event.stopPropagation();speak('${jpSafe}',this)">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-        聽發音
-      </button>
-      <div class="vocab-example">${v.ex}</div>
-    `;
-    card.onclick = () => { card.classList.toggle('expanded'); updateXP(1); };
+    if (k.char === '') { card.style.visibility = 'hidden'; card.className = 'kana-card'; grid.appendChild(card); return; }
+    card.className = 'kana-card' + (learned.has(prefix+i) ? ' learned' : '');
+    card.innerHTML = '<span class="kana-char">'+k.char+'</span><span class="kana-rom">'+k.rom+'</span>';
+    card.onclick = function() {
+      if (learned.has(prefix+i)) { learned.delete(prefix+i); card.classList.remove('learned'); }
+      else { learned.add(prefix+i); card.classList.add('learned'); updateXP(2); }
+      localStorage.setItem('learned', JSON.stringify([...learned]));
+    };
     grid.appendChild(card);
   });
 }
 
-function buildVocab() {
-  const picked = shuffleAndPick(vocabDB['日常生活'], 10);
-  renderVocabCards(picked);
+// ==================== VOCAB ====================
+function speak(text, btn) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ja-JP';
+  utter.rate = 0.85;
+  if (btn) { btn.classList.add('speaking'); utter.onend = function(){ btn.classList.remove('speaking'); }; }
+  window.speechSynthesis.speak(utter);
+}
+
+function pickRandom(arr, n) {
+  var copy = arr.slice();
+  for (var i = copy.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+  }
+  return copy.slice(0, n);
+}
+
+function renderVocabCards(list) {
+  var grid = document.getElementById('vocab-grid');
+  grid.innerHTML = '';
+  list.forEach(function(v) {
+    var card = document.createElement('div');
+    card.className = 'vocab-card';
+    var jpSafe = v.jp.replace(/'/g, "\\'");
+    card.innerHTML =
+      '<span class="vocab-tag">'+v.tag+'</span>'+
+      '<div class="vocab-jp">'+v.jp+'</div>'+
+      '<div class="vocab-reading">'+v.reading+'</div>'+
+      '<div class="vocab-zh">'+v.zh+'</div>'+
+      '<button class="speak-btn" onclick="event.stopPropagation();speak(\''+jpSafe+'\',this)">'+
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>'+
+        '聽發音</button>'+
+      '<div class="vocab-example">'+v.ex+'</div>';
+    card.onclick = function(){ card.classList.toggle('expanded'); updateXP(1); };
+    grid.appendChild(card);
+  });
+}
+
+function selectTheme(btn, theme) {
+  document.querySelectorAll('.theme-chip').forEach(function(c){ c.classList.remove('active'); });
+  btn.classList.add('active');
+  currentTheme = theme;
+  renderVocabCards(pickRandom(vocabDB[theme] || [], 10));
 }
 
 function shuffleVocab() {
-  const picked = shuffleAndPick(vocabDB[currentTheme] || vocabDB['日常生活'], 10);
-  renderVocabCards(picked);
-  updateXP(1);
-}
-    {jp:'ありがとう',reading:'arigatou',zh:'謝謝',tag:'日常',ex:'ありがとうございます。（非常感謝。）'},
-    {jp:'すみません',reading:'sumimasen',zh:'不好意思／對不起',tag:'日常',ex:'すみません、道を教えてください。（不好意思，請問路怎麼走？）'},
-    {jp:'こんにちは',reading:'konnichiwa',zh:'你好（白天）',tag:'問候',ex:'こんにちは！お元気ですか？（你好！你還好嗎？）'},
-    {jp:'おはよう',reading:'ohayou',zh:'早安',tag:'問候',ex:'おはようございます！（早安！）'},
-    {jp:'おやすみ',reading:'oyasumi',zh:'晚安',tag:'問候',ex:'おやすみなさい。（晚安。）'},
-    {jp:'はい',reading:'hai',zh:'是',tag:'日常',ex:'はい、わかりました。（是的，我明白了。）'},
-    {jp:'いいえ',reading:'iie',zh:'不是',tag:'日常',ex:'いいえ、ちがいます。（不，不是那樣的。）'},
-    {jp:'大丈夫',reading:'daijoubu',zh:'沒關係／沒問題',tag:'日常',ex:'大丈夫ですか？（你還好嗎？）'},
-    {jp:'わかった',reading:'wakatta',zh:'明白了',tag:'日常',ex:'わかった、やってみる。（明白了，我來試試看。）'},
-    {jp:'ちょっと待って',reading:'chotto matte',zh:'等一下',tag:'日常',ex:'ちょっと待ってください。（請稍等一下。）'},
-  ],
-  '飲食料理': [
-    {jp:'ご飯',reading:'gohan',zh:'飯／餐食',tag:'食物',ex:'ご飯を食べましょう。（我們來吃飯吧。）'},
-    {jp:'おいしい',reading:'oishii',zh:'好吃',tag:'形容詞',ex:'このラーメンはおいしい！（這碗拉麵很好吃！）'},
-    {jp:'水',reading:'mizu',zh:'水',tag:'飲料',ex:'水をください。（請給我水。）'},
-    {jp:'お茶',reading:'ocha',zh:'茶',tag:'飲料',ex:'お茶を一杯飲みたい。（想喝一杯茶。）'},
-    {jp:'肉',reading:'niku',zh:'肉',tag:'食材',ex:'肉が好きです。（我喜歡吃肉。）'},
-    {jp:'魚',reading:'sakana',zh:'魚',tag:'食材',ex:'魚を焼きます。（烤魚。）'},
-    {jp:'野菜',reading:'yasai',zh:'蔬菜',tag:'食材',ex:'野菜をたくさん食べてください。（請多吃蔬菜。）'},
-    {jp:'甘い',reading:'amai',zh:'甜的',tag:'味道',ex:'このケーキは甘い。（這個蛋糕很甜。）'},
-    {jp:'辛い',reading:'karai',zh:'辣的',tag:'味道',ex:'辛い食べ物が苦手です。（我不擅長吃辣的食物。）'},
-    {jp:'レストラン',reading:'resutoran',zh:'餐廳',tag:'場所',ex:'レストランで食べましょう。（去餐廳吃吧。）'},
-  ],
-  '旅遊交通': [
-    {jp:'電車',reading:'densha',zh:'電車',tag:'交通',ex:'電車で行きます。（搭電車去。）'},
-    {jp:'バス',reading:'basu',zh:'公車',tag:'交通',ex:'バスに乗ってください。（請搭公車。）'},
-    {jp:'駅',reading:'eki',zh:'車站',tag:'場所',ex:'駅はどこですか？（車站在哪裡？）'},
-    {jp:'切符',reading:'kippu',zh:'票',tag:'交通',ex:'切符を買います。（買票。）'},
-    {jp:'ホテル',reading:'hoteru',zh:'飯店',tag:'場所',ex:'ホテルを予約しました。（預訂了飯店。）'},
-    {jp:'空港',reading:'kuukou',zh:'機場',tag:'場所',ex:'空港までタクシーで行く。（搭計程車去機場。）'},
-    {jp:'地図',reading:'chizu',zh:'地圖',tag:'工具',ex:'地図を見てください。（請看地圖。）'},
-    {jp:'観光',reading:'kankou',zh:'觀光',tag:'旅遊',ex:'東京を観光します。（在東京觀光。）'},
-    {jp:'写真',reading:'shashin',zh:'照片',tag:'旅遊',ex:'写真を撮ってもいいですか？（可以拍照嗎？）'},
-    {jp:'お土産',reading:'omiyage',zh:'伴手禮',tag:'旅遊',ex:'お土産を買いたい。（想買伴手禮。）'},
-  ],
-  '動物自然': [
-    {jp:'犬',reading:'inu',zh:'狗',tag:'動物',ex:'犬が大好きです。（我非常喜歡狗。）'},
-    {jp:'猫',reading:'neko',zh:'貓',tag:'動物',ex:'猫はかわいいですね。（貓很可愛呢。）'},
-    {jp:'鳥',reading:'tori',zh:'鳥',tag:'動物',ex:'鳥が空を飛んでいる。（鳥在天空飛翔。）'},
-    {jp:'花',reading:'hana',zh:'花',tag:'自然',ex:'桜の花がきれいです。（櫻花很漂亮。）'},
-    {jp:'木',reading:'ki',zh:'樹',tag:'自然',ex:'大きい木がある。（有一棵大樹。）'},
-    {jp:'山',reading:'yama',zh:'山',tag:'自然',ex:'山に登りたい。（想爬山。）'},
-    {jp:'海',reading:'umi',zh:'海',tag:'自然',ex:'海で泳ぎます。（在海裡游泳。）'},
-    {jp:'空',reading:'sora',zh:'天空',tag:'自然',ex:'空が青いです。（天空很藍。）'},
-    {jp:'雨',reading:'ame',zh:'雨',tag:'天氣',ex:'雨が降っています。（正在下雨。）'},
-    {jp:'雪',reading:'yuki',zh:'雪',tag:'天氣',ex:'雪が降った。（下雪了。）'},
-  ],
-  '情緒感受': [
-    {jp:'嬉しい',reading:'ureshii',zh:'高興的',tag:'情緒',ex:'合格して嬉しい！（通過了好高興！）'},
-    {jp:'悲しい',reading:'kanashii',zh:'悲傷的',tag:'情緒',ex:'別れが悲しい。（離別令人悲傷。）'},
-    {jp:'楽しい',reading:'tanoshii',zh:'快樂的',tag:'情緒',ex:'旅行は楽しかった。（旅行很快樂。）'},
-    {jp:'怖い',reading:'kowai',zh:'可怕的',tag:'情緒',ex:'暗いところが怖い。（害怕黑暗的地方。）'},
-    {jp:'恥ずかしい',reading:'hazukashii',zh:'害羞的／不好意思',tag:'情緒',ex:'人前で話すのが恥ずかしい。（在人前說話很害羞。）'},
-    {jp:'びっくり',reading:'bikkuri',zh:'驚訝',tag:'情緒',ex:'びっくりした！（嚇到了！）'},
-    {jp:'疲れた',reading:'tsukareta',zh:'累了',tag:'感受',ex:'今日はとても疲れた。（今天非常累。）'},
-    {jp:'眠い',reading:'nemui',zh:'想睡的',tag:'感受',ex:'眠くて集中できない。（想睡覺無法集中。）'},
-    {jp:'痛い',reading:'itai',zh:'痛',tag:'感受',ex:'頭が痛い。（頭很痛。）'},
-    {jp:'大好き',reading:'daisuki',zh:'非常喜歡',tag:'情緒',ex:'日本語が大好きです。（我非常喜歡日文。）'},
-  ],
-  '工作學習': [
-    {jp:'仕事',reading:'shigoto',zh:'工作',tag:'工作',ex:'仕事が忙しい。（工作很忙。）'},
-    {jp:'会議',reading:'kaigi',zh:'會議',tag:'工作',ex:'会議は三時からです。（會議從三點開始。）'},
-    {jp:'勉強',reading:'benkyou',zh:'學習',tag:'學習',ex:'毎日日本語を勉強します。（每天學習日文。）'},
-    {jp:'学校',reading:'gakkou',zh:'學校',tag:'學習',ex:'学校に行きます。（去學校。）'},
-    {jp:'先生',reading:'sensei',zh:'老師',tag:'學習',ex:'先生に質問します。（向老師提問。）'},
-    {jp:'宿題',reading:'shukudai',zh:'作業',tag:'學習',ex:'宿題を忘れた。（忘記做作業了。）'},
-    {jp:'メール',reading:'meeru',zh:'電子郵件',tag:'工作',ex:'メールを送ります。（寄電子郵件。）'},
-    {jp:'締め切り',reading:'shimekiri',zh:'截止日期',tag:'工作',ex:'締め切りは明日です。（截止日期是明天。）'},
-    {jp:'練習',reading:'renshuu',zh:'練習',tag:'學習',ex:'毎日練習してください。（請每天練習。）'},
-    {jp:'試験',reading:'shiken',zh:'考試',tag:'學習',ex:'試験に合格した。（通過了考試。）'},
-  ],
-  '家庭關係': [
-    {jp:'家族',reading:'kazoku',zh:'家人',tag:'家庭',ex:'家族と旅行します。（和家人旅行。）'},
-    {jp:'お父さん',reading:'otousan',zh:'爸爸',tag:'家庭',ex:'お父さんは会社員です。（爸爸是上班族。）'},
-    {jp:'お母さん',reading:'okaasan',zh:'媽媽',tag:'家庭',ex:'お母さんの料理が好きです。（喜歡媽媽的料理。）'},
-    {jp:'兄',reading:'ani',zh:'哥哥',tag:'家庭',ex:'兄は大学生です。（哥哥是大學生。）'},
-    {jp:'妹',reading:'imouto',zh:'妹妹',tag:'家庭',ex:'妹はかわいいです。（妹妹很可愛。）'},
-    {jp:'友達',reading:'tomodachi',zh:'朋友',tag:'關係',ex:'友達と遊びます。（和朋友玩。）'},
-    {jp:'彼氏',reading:'kareshi',zh:'男友',tag:'關係',ex:'彼氏と映画を見ます。（和男友看電影。）'},
-    {jp:'彼女',reading:'kanojo',zh:'女友',tag:'關係',ex:'彼女は優しいです。（女友很溫柔。）'},
-    {jp:'結婚',reading:'kekkon',zh:'結婚',tag:'家庭',ex:'来年結婚する予定です。（預計明年結婚。）'},
-    {jp:'子供',reading:'kodomo',zh:'孩子',tag:'家庭',ex:'子供と公園で遊ぶ。（和孩子在公園玩。）'},
-  ],
-  '身體健康': [
-    {jp:'体',reading:'karada',zh:'身體',tag:'身體',ex:'体を大切にしてください。（請保重身體。）'},
-    {jp:'頭',reading:'atama',zh:'頭',tag:'身體',ex:'頭が痛いです。（頭很痛。）'},
-    {jp:'手',reading:'te',zh:'手',tag:'身體',ex:'手を洗ってください。（請洗手。）'},
-    {jp:'足',reading:'ashi',zh:'腳／腿',tag:'身體',ex:'足が疲れた。（腳累了。）'},
-    {jp:'病院',reading:'byouin',zh:'醫院',tag:'健康',ex:'病院に行きます。（去醫院。）'},
-    {jp:'薬',reading:'kusuri',zh:'藥',tag:'健康',ex:'薬を飲んでください。（請吃藥。）'},
-    {jp:'運動',reading:'undou',zh:'運動',tag:'健康',ex:'毎朝運動します。（每天早上運動。）'},
-    {jp:'睡眠',reading:'suimin',zh:'睡眠',tag:'健康',ex:'睡眠が大切です。（睡眠很重要。）'},
-    {jp:'風邪',reading:'kaze',zh:'感冒',tag:'健康',ex:'風邪をひいた。（感冒了。）'},
-    {jp:'元気',reading:'genki',zh:'有精神／健康',tag:'健康',ex:'元気ですか？（你好嗎／你有精神嗎？）'},
-  ],
-};
-
-// ---- VOCAB ----
-function speak(text, btn) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'ja-JP';
-  utter.rate = 0.85;
-  if (btn) {
-    btn.classList.add('speaking');
-    utter.onend = () => btn.classList.remove('speaking');
-  }
-  window.speechSynthesis.speak(utter);
-}
-
-let currentTheme = '日常生活';
-
-function selectTheme(btn, theme) {
-  document.querySelectorAll('.theme-chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  currentTheme = theme;
-  renderVocabCards(vocabDB[theme] || []);
+  renderVocabCards(pickRandom(vocabDB[currentTheme] || [], 10));
   updateXP(1);
 }
 
-function renderVocabCards(vocabList) {
-  const grid = document.getElementById('vocab-grid');
-  grid.innerHTML = '';
-  vocabList.forEach(v => {
-    const card = document.createElement('div');
-    card.className = 'vocab-card';
-    const jpSafe = v.jp.replace(/'/g, "\\'");
-    card.innerHTML = `
-      <span class="vocab-tag">${v.tag}</span>
-      <div class="vocab-jp">${v.jp}</div>
-      <div class="vocab-reading">${v.reading}</div>
-      <div class="vocab-zh">${v.zh}</div>
-      <button class="speak-btn" onclick="event.stopPropagation();speak('${jpSafe}',this)">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-        聽發音
-      </button>
-      <div class="vocab-example">${v.ex}</div>
-    `;
-    card.onclick = () => { card.classList.toggle('expanded'); updateXP(1); };
-    grid.appendChild(card);
-  });
-}
-
-function buildVocab() {
-  renderVocabCards(vocabDB['日常生活']);
-}
-
-// ---- GRAMMAR ----
+// ==================== GRAMMAR ====================
 function buildGrammar() {
-  const list = document.getElementById('grammar-list');
-  grammar.forEach(g => {
-    const item = document.createElement('div');
+  var list = document.getElementById('grammar-list');
+  grammar.forEach(function(g) {
+    var item = document.createElement('div');
     item.className = 'grammar-item';
-    const exHtml = g.examples.map(e => `
-      <div class="grammar-ex">
-        <div class="grammar-ex-jp">${e.jp}</div>
-        <div class="grammar-ex-zh">${e.zh}</div>
-      </div>
-    `).join('');
-    item.innerHTML = `
-      <div class="grammar-header" onclick="toggleGrammar(this)">
-        <div>
-          <div class="grammar-title-jp">${g.jp}</div>
-          <div class="grammar-title-zh">${g.zh}</div>
-        </div>
-        <span class="grammar-toggle">+</span>
-      </div>
-      <div class="grammar-body">
-        <div class="grammar-pattern">${g.pattern}</div>
-        <div class="grammar-examples">${exHtml}</div>
-      </div>
-    `;
+    var exHtml = g.examples.map(function(e){ return '<div class="grammar-ex"><div class="grammar-ex-jp">'+e.jp+'</div><div class="grammar-ex-zh">'+e.zh+'</div></div>'; }).join('');
+    item.innerHTML =
+      '<div class="grammar-header" onclick="toggleGrammar(this)">'+
+        '<div><div class="grammar-title-jp">'+g.jp+'</div><div class="grammar-title-zh">'+g.zh+'</div></div>'+
+        '<span class="grammar-toggle">+</span>'+
+      '</div>'+
+      '<div class="grammar-body"><div class="grammar-pattern">'+g.pattern+'</div><div class="grammar-examples">'+exHtml+'</div></div>';
     list.appendChild(item);
   });
 }
 
 function toggleGrammar(header) {
-  const item = header.parentElement;
-  item.classList.toggle('open');
+  header.parentElement.classList.toggle('open');
   updateXP(1);
 }
 
-// ---- QUIZ ----
+// ==================== QUIZ ====================
 function initQuiz() {
-  const all = hiragana.filter(k => k.char !== '');
-  quizData = shuffleArr([...all]).slice(0, 20);
-  quizIndex = 0;
-  quizScore = 0;
-  quizAnswered = false;
+  var all = hiragana.filter(function(k){ return k.char !== ''; });
+  quizData = pickRandom(all, 20);
+  quizIndex = 0; quizScore = 0; quizAnswered = false;
   renderQuiz();
 }
 
-function shuffleArr(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
 function renderQuiz() {
-  const container = document.getElementById('quiz-container');
-  if (quizIndex >= quizData.length) {
-    showQuizResult(container);
-    return;
-  }
-
-  const q = quizData[quizIndex];
-  const dotsHtml = quizData.map((_, i) => `<div class="quiz-dot ${i < quizIndex ? 'done' : i === quizIndex ? 'current' : ''}"></div>`).join('');
-
-  container.innerHTML = `
-    <div class="quiz-progress">${dotsHtml}</div>
-    <div style="text-align:right;font-size:12px;opacity:0.4;margin-bottom:20px;letter-spacing:1px;">${quizIndex+1} / ${quizData.length}</div>
-    <div class="quiz-question" id="quiz-q">
-      <span class="quiz-char">${q.char}</span>
-      <span class="quiz-prompt">輸入羅馬拼音（小寫英文）</span>
-    </div>
-    <div class="quiz-input-wrap">
-      <input class="quiz-input" id="quiz-inp" type="text" placeholder="輸入答案..." autocomplete="off" autocapitalize="none" spellcheck="false" />
-      <button class="quiz-submit" id="quiz-sub" onclick="checkAnswer()">確認</button>
-    </div>
-    <div class="quiz-feedback" id="quiz-feedback"></div>
-  `;
+  var container = document.getElementById('quiz-container');
+  if (quizIndex >= quizData.length) { showResult(container); return; }
+  var q = quizData[quizIndex];
+  var dots = quizData.map(function(_,i){ return '<div class="quiz-dot'+(i<quizIndex?' done':i===quizIndex?' current':'')+'"></div>'; }).join('');
+  container.innerHTML =
+    '<div class="quiz-progress">'+dots+'</div>'+
+    '<div style="text-align:right;font-size:12px;opacity:0.4;margin-bottom:20px;">'+(quizIndex+1)+' / '+quizData.length+'</div>'+
+    '<div class="quiz-question">'+
+      '<span class="quiz-char">'+q.char+'</span>'+
+      '<span class="quiz-prompt">輸入羅馬拼音（小寫英文）</span>'+
+    '</div>'+
+    '<div class="quiz-input-wrap">'+
+      '<input class="quiz-input" id="quiz-inp" type="text" placeholder="輸入答案..." autocomplete="off" autocapitalize="none" spellcheck="false" />'+
+      '<button class="quiz-submit" id="quiz-sub" onclick="checkAnswer()">確認</button>'+
+    '</div>'+
+    '<div class="quiz-feedback" id="quiz-feedback"></div>';
   quizAnswered = false;
-
-  const inp = document.getElementById('quiz-inp');
+  var inp = document.getElementById('quiz-inp');
   inp.focus();
-  inp.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
+  inp.onkeydown = function(e){ if(e.key==='Enter') checkAnswer(); };
 }
 
 function checkAnswer() {
-  if (quizAnswered) {
-    quizIndex++;
-    renderQuiz();
-    return;
-  }
-  const inp = document.getElementById('quiz-inp');
-  const sub = document.getElementById('quiz-sub');
-  const fb = document.getElementById('quiz-feedback');
-  const q = quizData[quizIndex];
-  const val = inp.value.trim().toLowerCase();
+  if (quizAnswered) { quizIndex++; renderQuiz(); return; }
+  var inp = document.getElementById('quiz-inp');
+  var sub = document.getElementById('quiz-sub');
+  var fb  = document.getElementById('quiz-feedback');
+  var q   = quizData[quizIndex];
+  var val = inp.value.trim().toLowerCase();
   if (!val) return;
-
   quizAnswered = true;
   inp.disabled = true;
-  sub.textContent = quizIndex + 1 >= quizData.length ? '查看結果 →' : '下一題 →';
-
-  // Accept common alternates (e.g. si=shi, ti=chi)
-  const alternates = { 'shi':['si'], 'chi':['ti'], 'tsu':['tu'], 'fu':['hu'], 'ji':['zi','di'], 'zu':['du'] };
-  const correct = q.rom;
-  const accepted = [correct, ...(alternates[correct] || [])];
-  const isCorrect = accepted.includes(val);
-
-  if (isCorrect) {
-    inp.classList.add('correct');
-    quizScore++;
-    fb.textContent = '正確！✓';
-    fb.className = 'quiz-feedback ok';
-    quizData[quizIndex]._userAnswer = val;
-    quizData[quizIndex]._ok = true;
+  sub.textContent = quizIndex+1 >= quizData.length ? '查看結果 →' : '下一題 →';
+  var alt = {shi:['si'],chi:['ti'],tsu:['tu'],fu:['hu'],ji:['zi','di'],zu:['du']};
+  var ok = val === q.rom || (alt[q.rom] && alt[q.rom].indexOf(val) >= 0);
+  if (ok) {
+    inp.classList.add('correct'); quizScore++;
+    fb.textContent = '正確！✓'; fb.className = 'quiz-feedback ok';
+    quizData[quizIndex]._ans = val; quizData[quizIndex]._ok = true;
   } else {
     inp.classList.add('wrong');
-    fb.innerHTML = `答錯了　正確答案：<strong>${correct}</strong>`;
+    fb.innerHTML = '答錯了　正確答案：<strong>'+q.rom+'</strong>';
     fb.className = 'quiz-feedback fail';
-    quizData[quizIndex]._userAnswer = val;
-    quizData[quizIndex]._ok = false;
+    quizData[quizIndex]._ans = val; quizData[quizIndex]._ok = false;
   }
 }
 
-function showQuizResult(container) {
+function showResult(container) {
   updateXP(quizScore * 5);
-  const pct = Math.round(quizScore / quizData.length * 100);
-  const emoji = pct === 100 ? '🎉' : pct >= 80 ? '😊' : pct >= 60 ? '🙂' : '😅';
-
-  const rowsHtml = quizData.map(q => `
-    <div class="quiz-review-row ${q._ok ? 'ok' : 'ng'}">
-      <div class="review-char">${q.char}</div>
-      <div class="review-correct">${q.rom}</div>
-      <div class="${q._ok ? 'review-correct' : 'review-wrong'}">${q._userAnswer || '—'}</div>
-      <div class="review-icon">${q._ok ? '✓' : '✗'}</div>
-    </div>
-  `).join('');
-
-  container.innerHTML = `
-    <div class="score-display">
-      <div class="score-number">${quizScore}<span style="font-size:36px;opacity:0.4">/${quizData.length}</span></div>
-      <div class="score-label">${emoji} 答對率 ${pct}%</div>
-      <button class="next-btn" onclick="initQuiz()">再試一次</button>
-    </div>
-    <div class="quiz-review">
-      <div class="quiz-review-row header">
-        <div>假名</div><div>正解</div><div>你的答案</div><div>結果</div>
-      </div>
-      ${rowsHtml}
-    </div>
-  `;
+  var pct = Math.round(quizScore/quizData.length*100);
+  var emoji = pct===100?'🎉':pct>=80?'😊':pct>=60?'🙂':'😅';
+  var rows = quizData.map(function(q){
+    return '<div class="quiz-review-row '+(q._ok?'ok':'ng')+'">'+
+      '<div class="review-char">'+q.char+'</div>'+
+      '<div class="review-correct">'+q.rom+'</div>'+
+      '<div class="'+(q._ok?'review-correct':'review-wrong')+'">'+(q._ans||'—')+'</div>'+
+      '<div style="text-align:center">'+(q._ok?'✓':'✗')+'</div>'+
+    '</div>';
+  }).join('');
+  container.innerHTML =
+    '<div class="score-display">'+
+      '<div class="score-number">'+quizScore+'<span style="font-size:36px;opacity:0.4">/'+quizData.length+'</span></div>'+
+      '<div class="score-label">'+emoji+' 答對率 '+pct+'%</div>'+
+      '<button class="next-btn" onclick="initQuiz()">再試一次</button>'+
+    '</div>'+
+    '<div class="quiz-review">'+
+      '<div class="quiz-review-row header"><div>假名</div><div>正解</div><div>你的答案</div><div>結果</div></div>'+
+      rows+
+    '</div>';
 }
 
-// ---- INIT ----
+// ==================== INIT ====================
 buildKanaGrid(hiragana, 'hiragana-grid', 'h');
 buildKanaGrid(katakana, 'katakana-grid', 'k');
-buildVocab();
+renderVocabCards(pickRandom(vocabDB['日常生活'], 10));
 buildGrammar();
 updateXP(0);
 </script>
